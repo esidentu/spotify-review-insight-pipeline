@@ -1,0 +1,33 @@
+{
+  "run_id": "batch-benchmark-golden50-w2",
+  "created_at_utc": "2026-10-20T21:02:30.262295+00:00",
+  "input_rows": 50,
+  "batch_size": 5,
+  "worker_count": 2,
+  "prompt_version": "spotify-enrich-batch5-benchmark-v1",
+  "model_ids": [
+    "jev-1.13.0"
+  ],
+  "wall_seconds": 0.836078,
+  "calls": 10,
+  "input_tokens": 53079,
+  "output_tokens": 8663,
+  "cost_usd": "0.002229318",
+  "topic_agreement": 0.86,
+  "intent_agreement": 0.94,
+  "severity_exact_agreement": 0.88,
+  "sentiment_mae": 0.1612,
+  "batch_latencies_seconds": [
+    0.157209,
+    0.196887,
+    0.129568,
+    0.14142,
+    0.171174,
+    0.173159,
+    0.130607,
+    0.13163,
+    0.133885,
+    0.134525
+  ],
+  "estimate_note": "The 50-row benchmark is a directional speed and quality check; it does not certify 100,000-row latency or accuracy."
+}

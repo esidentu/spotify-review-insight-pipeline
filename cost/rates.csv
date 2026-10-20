@@ -1,0 +1,3 @@
+provider,model,tier,unit,price,currency,unit_size,as_of,source_url
+typesafe,jev,standard,input_tokens,0.042,USD,1000000,2026-10-20,https://typesafe.ai/
+typesafe,jev,standard,output_tokens,0,USD,1000000,2026-10-20,https://typesafe.ai/

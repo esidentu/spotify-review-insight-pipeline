@@ -1,0 +1,112 @@
+{
+  "target_population": {
+    "source_rows": 660622,
+    "nonempty_reviews": 660609,
+    "empty_text_quarantines": 13,
+    "distinct_nonempty_texts": 484189
+  },
+  "controls": {
+    "budget_usd": 8.0,
+    "max_output_tokens": null,
+    "max_workers": 2,
+    "fallback_fraction_cap": 0.0
+  },
+  "scenarios": {
+    "10k_forecast_from_500": {
+      "work_units": {
+        "enrich_primary": 7969,
+        "enrich_fallback": 0,
+        "verify": 797,
+        "group": 0,
+        "memo": 0
+      },
+      "retry_multiplier_by_role": {
+        "enrich_primary": 1.0,
+        "enrich_fallback": 1.0,
+        "verify": 1.0,
+        "group": 1.0,
+        "memo": 1.0
+      }
+    },
+    "full_base": {
+      "work_units": {
+        "enrich_primary": 484189,
+        "enrich_fallback": 0,
+        "verify": 48419,
+        "group": 0,
+        "memo": 0
+      },
+      "retry_multiplier_by_role": {
+        "enrich_primary": 1.0,
+        "enrich_fallback": 1.0,
+        "verify": 1.0,
+        "group": 1.0,
+        "memo": 1.0
+      }
+    },
+    "final_100000_at_10k_unique_rate": {
+      "work_units": {
+        "enrich_primary": 84480,
+        "enrich_fallback": 0,
+        "verify": 8448,
+        "group": 0,
+        "memo": 0
+      },
+      "retry_multiplier_by_role": {
+        "enrich_primary": 1.0,
+        "enrich_fallback": 1.0,
+        "verify": 1.0,
+        "group": 1.0,
+        "memo": 1.0
+      }
+    },
+    "final_100000_at_population_unique_rate": {
+      "work_units": {
+        "enrich_primary": 73271,
+        "enrich_fallback": 0,
+        "verify": 7328,
+        "group": 0,
+        "memo": 0
+      },
+      "retry_multiplier_by_role": {
+        "enrich_primary": 1.0,
+        "enrich_fallback": 1.0,
+        "verify": 1.0,
+        "group": 1.0,
+        "memo": 1.0
+      }
+    },
+    "final_100000_no_reuse": {
+      "work_units": {
+        "enrich_primary": 100000,
+        "enrich_fallback": 0,
+        "verify": 10000,
+        "group": 0,
+        "memo": 0
+      },
+      "retry_multiplier_by_role": {
+        "enrich_primary": 1.0,
+        "enrich_fallback": 1.0,
+        "verify": 1.0,
+        "group": 1.0,
+        "memo": 1.0
+      }
+    },
+    "full_no_reuse_comparison": {
+      "work_units": {
+        "enrich_primary": 660609,
+        "enrich_fallback": 0,
+        "verify": 66061,
+        "group": 0,
+        "memo": 0
+      },
+      "retry_multiplier_by_role": {
+        "enrich_primary": 1.0,
+        "enrich_fallback": 1.0,
+        "verify": 1.0,
+        "group": 1.0,
+        "memo": 1.0
+      }
+    }
+  }
+}

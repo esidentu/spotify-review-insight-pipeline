@@ -1,0 +1,2 @@
+{"stage":"group","method":"deterministic topic buckets","input":"records.jsonl","output":"membership.csv and ranking.csv","provider_calls":0}
+{"stage":"memo","method":"local template from saved aggregate artifacts","input":"ranking.csv and claims.csv","output":"memo.md","provider_calls":0}

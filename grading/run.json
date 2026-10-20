@@ -1,0 +1,15 @@
+{
+  "allow_multi_issue": false,
+  "analysis_count": 100000,
+  "analysis_file": "Data/final_100000.csv",
+  "analysis_sha256": "cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c",
+  "classification_input_fields": [
+    "review_text"
+  ],
+  "declared_scope": "100000-row deterministic subset; full source ingestion profile retained separately",
+  "labeling_review": "See review_100000_quality.md; completed records preserved as produced.",
+  "pipeline_run_id": "cold-100000-20261020T213754Z",
+  "source_file": "Data/spotify_reviews_18months.csv",
+  "source_file_sha256": "1fc85de68a304dd8978b537cfa58793d5f41cbaf417fa32cb53899f83a2fcef6",
+  "version": "a5-audit-v1"
+}

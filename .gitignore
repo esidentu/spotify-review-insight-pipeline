@@ -1,0 +1,18 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+Data/spotify_reviews_18months.csv
+Data/spotify-insight-dataset.zip
+grading-reference.json
+dashboard/*.sqlite3
+.agents/
+Project Instructions/
+cost/pilot_records_100000.jsonl
+cost/pilot_records_100000_complete.jsonl
+cost/pilot_records_100000_progress.jsonl
+outputs/
