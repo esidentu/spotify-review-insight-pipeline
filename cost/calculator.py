@@ -15,6 +15,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CALLS = ROOT / "cost" / "pilot_calls.jsonl"
 DEFAULT_RUNS = ROOT / "cost" / "pilot_runs.jsonl"
+SUPPLEMENTAL_CALLS = (ROOT / "cost" / "cold100_supplement_calls.jsonl",)
+SUPPLEMENTAL_RUNS = (ROOT / "cost" / "cold100_supplement_runs.jsonl",)
 DEFAULT_RATES = ROOT / "cost" / "rates.csv"
 DEFAULT_PROJECTION = ROOT / "cost" / "projection.json"
 DEFAULT_REPORT = ROOT / "cost" / "report.md"
@@ -48,6 +50,21 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
             if not isinstance(value, dict):
                 raise ValueError(f"{path}:{line_number}: each JSONL row must be an object")
             rows.append(value)
+    return rows
+
+
+def read_jsonl_with_supplements(path: Path, supplements: tuple[Path, ...], key: str) -> list[dict[str, Any]]:
+    """Read a ledger and append supplemental rows without duplicating copied rows."""
+    rows = read_jsonl(path)
+    seen = {str(row[key]) for row in rows if row.get(key) is not None}
+    for supplement in supplements:
+        for row in read_jsonl(supplement):
+            row_key = row.get(key)
+            if row_key is not None and str(row_key) in seen:
+                continue
+            rows.append(row)
+            if row_key is not None:
+                seen.add(str(row_key))
     return rows
 
 
@@ -416,8 +433,14 @@ def main() -> int:
     replay.add_argument("--out", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     if args.command == "replay":
-        calls = read_jsonl(args.calls)
-        runs = read_jsonl(args.runs)
+        if args.calls.resolve() == DEFAULT_CALLS.resolve():
+            calls = read_jsonl_with_supplements(args.calls, SUPPLEMENTAL_CALLS, "local_call_id")
+        else:
+            calls = read_jsonl(args.calls)
+        if args.runs.resolve() == DEFAULT_RUNS.resolve():
+            runs = read_jsonl_with_supplements(args.runs, SUPPLEMENTAL_RUNS, "run_id")
+        else:
+            runs = read_jsonl(args.runs)
         rates = read_rates(args.rates)
         projection = json.loads(args.projection.read_text(encoding="utf-8")) if args.projection.exists() else {}
         reconciliations = read_jsonl(args.reconciliations)
@@ -432,3 +455,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
