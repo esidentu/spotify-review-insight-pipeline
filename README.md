@@ -98,7 +98,7 @@ The pipeline also accepts a user-supplied CSV with the six source columns. It qu
 .\.venv\Scripts\python.exe cost\pilot.py cold --input "C:\path\to\reviews.csv" --workers 2 --execute
 ```
 
-`--execute` explicitly authorizes the cold labels, verification, and any missing group/memo decisions for that input; the preflight command is offline. Resume with the same input and worker count by adding `--resume --execute`; saved successful decisions are reused so recovery does not repeat them. Outputs include `ai_grouping.json`, `ai_recommendation.json`, `membership.csv`, `ranking.csv`, and the evidence-backed `memo.md`. Run `warm --input` to validate saved labels without provider calls. The separate saved Jev grouping and recommendation decisions for the approved 100,000-review deliverable are in `grading/`.
+`--execute` explicitly authorizes the cold labels, verification, and any missing group/memo decisions for that input; the preflight command is offline. Resume with the same input and worker count by adding `--resume --execute`; saved successful decisions are reused so recovery does not repeat them. If labels are already complete but the new decision files are missing, resume runs only those missing Jev roles. Outputs include `ai_grouping.json`, `ai_recommendation.json`, `membership.csv`, `ranking.csv`, and the evidence-backed `memo.md`. Run `warm --input` to validate saved labels without provider calls. The separate saved Jev grouping and recommendation decisions for the approved 100,000-review deliverable are in `grading/`.
 
 Never put API keys in code, logs, prompts, browser code, screenshots, or submitted artifacts.
 
