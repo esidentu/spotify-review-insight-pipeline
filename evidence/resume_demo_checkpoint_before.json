@@ -1,13 +1,14 @@
 {
-  "run_id": "cold-custom-0736cdcd005a-20261021T015103Z",
-  "input_sha256": "0736cdcd005add04a7ff7de9853c0c29faa0f19dea4fd75e873dcccda6d1ddb4",
-  "snapshot_created_at_utc": "2026-10-21T01:52:07.898666+00:00",
-  "snapshot_origin": "controlled synthetic interruption/resume demonstration; successful initial enrichment calls at the pause checkpoint",
+  "run_id": "cold-custom-2e1f03ced275-20261021T020307Z",
+  "input_sha256": "2e1f03ced275738faea40bee2379dc77d597f0d349b0172a2814c962bf96ff22",
+  "workers": 2,
+  "label_config": "jev-latest+spotify-enrich-v2+record-v1",
   "completed_ids": [
-    "LIVE-DEMO-001",
-    "LIVE-DEMO-002",
-    "LIVE-DEMO-003",
-    "LIVE-DEMO-004"
+    "RECORD-20261020190050-001",
+    "RECORD-20261020190050-002",
+    "RECORD-20261020190050-003",
+    "RECORD-20261020190050-004"
   ],
-  "completed_count": 4
+  "completed_count": 4,
+  "snapshot_origin": "actual saved progress immediately after controlled pause in the recorded run"
 }

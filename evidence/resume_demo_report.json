@@ -1,14 +1,14 @@
 {
-  "run_id": "cold-custom-0736cdcd005a-20261021T015103Z",
-  "input_file": "evidence/resume_demo_live_input.csv",
-  "input_sha256": "0736cdcd005add04a7ff7de9853c0c29faa0f19dea4fd75e873dcccda6d1ddb4",
+  "run_id": "cold-custom-2e1f03ced275-20261021T020307Z",
+  "input_file": "evidence/resume_demo_recording_input.csv",
+  "input_sha256": "2e1f03ced275738faea40bee2379dc77d597f0d349b0172a2814c962bf96ff22",
+  "recording_file": "evidence/resume_demo_recording.mp4",
   "label_config": "jev-latest+spotify-enrich-v2+record-v1",
   "workers": 2,
   "controlled_pause": {
     "stop_after_new_enrichments": 4,
     "completed_ids_saved": 4,
-    "in_flight_calls_after_pause": 0,
-    "pause_source": "runner --stop-after-enrichments option"
+    "in_flight_calls_after_pause": 0
   },
   "resume": {
     "new_enrichment_calls": 26,
@@ -20,11 +20,11 @@
     "failed_records": 0,
     "all_provider_calls_succeeded": true,
     "all_usage_complete": true,
-    "input_tokens": 38507,
+    "input_tokens": 38503,
     "output_tokens": 4878,
-    "known_jev_input_cost_usd": "0.001617294",
+    "known_jev_input_cost_usd": "0.001617126",
     "total_provider_calls": 33
   },
-  "live_screen_recording_created": false,
-  "note": "This is a real controlled pause and resume using Jev on a separate 30-row synthetic input; no 100,000-row output was changed. The evidence report is a machine-readable run summary, not a screen recording."
+  "note": "This report and both snapshots correspond to the recorded live synthetic pause/resume run. The assignment 100,000-row result was not changed.",
+  "recording_size_bytes": 65043328
 }
