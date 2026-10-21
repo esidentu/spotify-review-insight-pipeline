@@ -554,9 +554,16 @@ def run_local_stages(records: list[dict[str, Any]]) -> dict[str, Any]:
     started = time.perf_counter()
     completed_records = RECORDS.with_name(RECORDS.stem + "_complete.jsonl")
     write_jsonl_atomic(completed_records, records)
+    ranking_temp = ROOT / "outputs" / "ranking_temp"
+    ranking_temp.mkdir(parents=True, exist_ok=True)
+    ranking_env = os.environ.copy()
+    ranking_env["TMP"] = str(ranking_temp)
+    ranking_env["TEMP"] = str(ranking_temp)
+    ranking_env["TMPDIR"] = str(ranking_temp)
     subprocess_result = __import__("subprocess").run(
         [sys.executable, str(ROOT / "src" / "spotify_pipeline" / "ranking.py"), "--records", str(completed_records), "--membership", str(MEMBERSHIP), "--out", str(RANKING)],
         cwd=ROOT,
+        env=ranking_env,
         capture_output=True,
         text=True,
         check=False,
@@ -813,9 +820,10 @@ def do_cold(args: argparse.Namespace) -> int:
             raise ValueError("Saved run and Jev group/memo decisions are already complete; refusing duplicate paid work")
         if run_state.get("status") == "completed":
             print("Saved labels are complete; resume will skip them and run only missing Jev group/memo decisions.")
-        run_state["status"] = "running"
-        run_state["attempts"] = int(run_state.get("attempts", 0)) + 1
-        run_state["last_started_at_utc"] = datetime.now(timezone.utc).isoformat()
+        if args.execute:
+            run_state["status"] = "running"
+            run_state["attempts"] = int(run_state.get("attempts", 0)) + 1
+            run_state["last_started_at_utc"] = datetime.now(timezone.utc).isoformat()
         run_id = run_state["run_id"]
     elif args.resume:
         run_state = {}
@@ -1279,7 +1287,7 @@ def do_cold(args: argparse.Namespace) -> int:
     run_state["last_failed_records"] = run_record["failed_records"]
     run_state["saved_completed_records"] = run_record["completed_records"]
     write_json_atomic(RUN_STATE, run_state)
-    print(f"Cold {CHECKPOINT_TAG} input stopped/saved: {run_record['completed_records']} completed, {run_record['quarantined_records']} quarantined, {run_record['failed_records']} failed; known Jev spend USD {spent} of {budget}.")
+    print(f"Cold {CHECKPOINT_TAG} input stopped/saved: {run_record['completed_records']} completed, {run_record['quarantined_records']} quarantined, {run_record['failed_records']} failed; known Jev spend USD {final_spent} of {budget}.")
     if errors:
         print("Unresolved errors remain. Review call logs and billing usage before any resume or warm run.")
         return 1
