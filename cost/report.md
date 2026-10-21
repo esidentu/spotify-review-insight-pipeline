@@ -30,6 +30,8 @@ This report is calculated offline from saved call usage, run measurements, and e
 | cold-custom-0736cdcd005a-20261021T015103Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 3 | succeeded: 3 | 1338 | 0 | 60 | 3 | USD 0.000056 | priced usage |
 | cold-custom-2e1f03ced275-20261021T020307Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | record-v1 | 1 | 2 | 30 | succeeded: 30 | 37169 | 0 | 4818 | 30 | USD 0.001561 | priced usage |
 | cold-custom-2e1f03ced275-20261021T020307Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 3 | succeeded: 3 | 1334 | 0 | 60 | 3 | USD 0.000056 | priced usage |
+| cold-custom-c884ac3b9be5-20261021T022408Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | record-v1 | 1 | 1 | 100 | succeeded: 100 | 125087 | 0 | 16054 | 100 | USD 0.005254 | priced usage |
+| cold-custom-c884ac3b9be5-20261021T022408Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 1 | 10 | succeeded: 10 | 4502 | 0 | 200 | 10 | USD 0.000189 | priced usage |
 | cold-custom-f5a801c0b3b7-20261021T014956Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | record-v1 | 1 | 2 | 30 | succeeded: 30 | 37169 | 0 | 4818 | 30 | USD 0.001561 | priced usage |
 | cold-custom-f5a801c0b3b7-20261021T014956Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 3 | succeeded: 3 | 1339 | 0 | 60 | 3 | USD 0.000056 | priced usage |
 | dashboard-finalization-100000 | finalization | group | typesafe | jev-1.13.0 | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | succeeded: 1 | 3180 | 0 | 101 | 1 | USD 0.000134 | priced usage |
@@ -38,7 +40,7 @@ This report is calculated offline from saved call usage, run measurements, and e
 | worker-comparison-golden50-w1 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 1 | 50 | succeeded: 50 | 50825 | 0 | 8027 | 50 | USD 0.002135 | priced usage |
 | worker-comparison-golden50-w2 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 2 | 50 | succeeded: 50 | 50825 | 0 | 8027 | 50 | USD 0.002135 | priced usage |
 
-**Known API subtotal:** USD 3.511170.
+**Known API subtotal:** USD 3.516613.
 **Calls with incomplete or missing usage:** 13.
 
 ## Usage dashboard reconciliation
@@ -97,6 +99,8 @@ These notes record dashboard readings and checks of failed calls. TypeSafe warns
 | cold-custom-f5a801c0b3b7-20261021T014956Z | cold | 30 | f5a801c0b3b74666bccc823e964a12f9b79b78c7f9625237648e3beb7d77d5c4 | 30 | 30 | 0 | 30 | 0 | 2 | 19.036084 | 1.58 | USD 0.053911 | USD 0.000054 | unknown/not recorded |
 | cold-custom-0736cdcd005a-20261021T015103Z | cold | 30 | 0736cdcd005add04a7ff7de9853c0c29faa0f19dea4fd75e873dcccda6d1ddb4 | 30 | 30 | 0 | 30 | 4 | 2 | 5.541814 | 5.41 | USD 0.053910 | USD 0.000054 | unknown/not recorded |
 | cold-custom-2e1f03ced275-20261021T020307Z | cold | 30 | 2e1f03ced275738faea40bee2379dc77d597f0d349b0172a2814c962bf96ff22 | 30 | 30 | 0 | 30 | 4 | 2 | 6.770184 | 4.43 | USD 0.053904 | USD 0.000054 | unknown/not recorded |
+| cold-custom-c884ac3b9be5-20261021T022408Z | cold | 100 | c884ac3b9be5066995d5063f96ad9af6e5e082975788c1684c4f6b6ea661dd0e | 100 | 100 | 0 | 100 | 0 | 1 | 12.779673 | 7.82 | USD 0.054427 | USD 0.000054 | unknown/not recorded |
+| warm-custom-c884ac3b9be5-20261021T022426Z | warm | 100 | c884ac3b9be5066995d5063f96ad9af6e5e082975788c1684c4f6b6ea661dd0e | 100 | 100 | 0 | 100 | 100 | 1 | 0.000507 | 197238.66 | unavailable | unavailable | unknown/not recorded |
 
 Costs are phase totals across logged model roles. Request-duration sums are not substituted for wall-clock time. Local compute is reported separately and remains unknown unless measured or estimated in the run log.
 
@@ -117,17 +121,17 @@ These API calls are priced from their saved token usage, but the run ledger has 
 
 Target counts from the editable projection file: source_rows=660622, nonempty_reviews=660609, empty_text_quarantines=13, distinct_nonempty_texts=484189.
 Spend budget: USD 8.0.
-Observed cold work units by role: enrich_primary=78389, enrich_fallback=0, verify=7819, group=0, memo=0.
+Observed cold work units by role: enrich_primary=78489, enrich_fallback=0, verify=7829, group=0, memo=0.
 Only calls with complete token usage are used to calibrate per-work-unit cost. Failed calls with missing usage remain listed as unresolved and are excluded from calibration. Request counts are recorded as operational metadata, not priced as token usage.
 
 | Scenario | API projection | Estimated wall time | Budget check | Status |
 |---|---|---|---|---|
-| 10k_forecast_from_500 | USD 0.356944 | 1938.25 sec | within budget | complete projection |
-| full_base | USD 21.687497 | 117760.49 sec | OVER BUDGET | complete projection |
-| final_100000_at_10k_unique_rate | USD 3.783976 | 20546.52 sec | within budget | complete projection |
-| final_100000_at_population_unique_rate | USD 3.281927 | 17821.25 sec | within budget | complete projection |
-| final_100000_no_reuse | USD 4.479138 | 24321.16 sec | within budget | complete projection |
-| full_no_reuse_comparison | USD 29.589593 | 160667.89 sec | OVER BUDGET | complete projection |
+| 10k_forecast_from_500 | USD 0.357042 | 1036.97 sec | within budget | complete projection |
+| full_base | USD 21.693441 | 63003.52 sec | OVER BUDGET | complete projection |
+| final_100000_at_10k_unique_rate | USD 3.785013 | 10992.68 sec | within budget | complete projection |
+| final_100000_at_population_unique_rate | USD 3.282826 | 9534.44 sec | within budget | complete projection |
+| final_100000_no_reuse | USD 4.480366 | 13012.17 sec | within budget | complete projection |
+| full_no_reuse_comparison | USD 29.597703 | 85959.59 sec | OVER BUDGET | complete projection |
 
 Projection cost uses per-stage charges per logical work unit from cold calls, including retries logged under each operation. Runtime uses recorded stage wall times and does not assume unmeasured concurrency speedups.
 
@@ -138,3 +142,4 @@ Projection cost uses per-stage charges per logical work unit from cold calls, in
 - Maximum output tokens: not set
 - Fallback fraction cap: 0.0
 - No paid API calls were made by this report.
+
