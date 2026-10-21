@@ -17,7 +17,7 @@ The local checker confirms 100,000 completed classifications, 13 quarantines, no
 | Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [checkpoint evidence](grading/checkpoint_before.json), [resume evidence](grading/checkpoint_after.json), [local dashboard and deployment files](dashboard/README.md) |
 | Remaining requirements | [Submission readiness and completion plan](SUBMISSION_READINESS.md) |
 
-The short interruption/resume recording and course-portal submission remain open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
+The real synthetic interruption/resume demonstration and checkpoint evidence are in [`evidence/`](evidence/README.md). An actual screen-video capture and course-portal submission remain open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
 
 ## Source provenance
 

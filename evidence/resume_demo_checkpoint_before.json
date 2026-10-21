@@ -1,0 +1,13 @@
+{
+  "run_id": "cold-custom-0736cdcd005a-20261021T015103Z",
+  "input_sha256": "0736cdcd005add04a7ff7de9853c0c29faa0f19dea4fd75e873dcccda6d1ddb4",
+  "snapshot_created_at_utc": "2026-10-21T01:52:07.898666+00:00",
+  "snapshot_origin": "controlled synthetic interruption/resume demonstration; successful initial enrichment calls at the pause checkpoint",
+  "completed_ids": [
+    "LIVE-DEMO-001",
+    "LIVE-DEMO-002",
+    "LIVE-DEMO-003",
+    "LIVE-DEMO-004"
+  ],
+  "completed_count": 4
+}

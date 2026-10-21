@@ -1,0 +1,31 @@
+review_id,review_text,review_rating,review_likes,app_version,review_timestamp
+LIVE-DEMO-001,The app crashes whenever I open my playlists.,1,0,9.0.2,2026-10-20T09:01:00Z
+LIVE-DEMO-002,Please add a way to sort downloaded albums.,3,0,9.0.2,2026-10-20T09:02:00Z
+LIVE-DEMO-003,"I like the new design, but search is very slow.",3,0,9.0.2,2026-10-20T09:03:00Z
+LIVE-DEMO-004,The app works well and I enjoy listening every day.,5,0,9.0.2,2026-10-20T09:04:00Z
+LIVE-DEMO-005,I am cancelling because the monthly price is too high.,1,0,9.0.2,2026-10-20T09:05:00Z
+LIVE-DEMO-006,I cannot log in after resetting my password.,1,0,9.0.2,2026-10-20T09:06:00Z
+LIVE-DEMO-007,Songs stop playing after a few minutes on wifi.,2,0,9.0.2,2026-10-20T09:07:00Z
+LIVE-DEMO-008,My saved music disappeared after the update.,1,0,9.0.2,2026-10-20T09:08:00Z
+LIVE-DEMO-009,There are too many ads between songs.,2,0,9.0.2,2026-10-20T09:09:00Z
+LIVE-DEMO-010,Customer support never replied to my message.,1,0,9.0.2,2026-10-20T09:10:00Z
+LIVE-DEMO-011,I love finding new artists with this app.,5,0,9.0.2,2026-10-20T09:11:00Z
+LIVE-DEMO-012,Please bring back the old library layout.,3,0,9.0.2,2026-10-20T09:12:00Z
+LIVE-DEMO-013,Premium charged me twice this month.,1,0,9.0.2,2026-10-20T09:13:00Z
+LIVE-DEMO-014,The download button does nothing on my phone.,1,0,9.0.2,2026-10-20T09:14:00Z
+LIVE-DEMO-015,Playback keeps pausing when I lock the screen.,2,0,9.0.2,2026-10-20T09:15:00Z
+LIVE-DEMO-016,The lyrics are missing for many songs.,3,0,9.0.2,2026-10-20T09:16:00Z
+LIVE-DEMO-017,I want a family plan with more accounts.,4,0,9.0.2,2026-10-20T09:17:00Z
+LIVE-DEMO-018,The app is easy to use and sounds great.,5,0,9.0.2,2026-10-20T09:18:00Z
+LIVE-DEMO-019,My queue resets whenever I close the app.,2,0,9.0.2,2026-10-20T09:19:00Z
+LIVE-DEMO-020,I cancelled my subscription and want a refund.,1,0,9.0.2,2026-10-20T09:20:00Z
+LIVE-DEMO-021,Search results show unrelated songs at the top.,2,0,9.0.2,2026-10-20T09:21:00Z
+LIVE-DEMO-022,The latest version uses too much battery.,2,0,9.0.2,2026-10-20T09:22:00Z
+LIVE-DEMO-023,I cannot contact a real person for help.,1,0,9.0.2,2026-10-20T09:23:00Z
+LIVE-DEMO-024,The app has a clean interface and good playlists.,5,0,9.0.2,2026-10-20T09:24:00Z
+LIVE-DEMO-025,Offline downloads vanish when I restart my phone.,1,0,9.0.2,2026-10-20T09:25:00Z
+LIVE-DEMO-026,The subscription price increased without warning.,1,0,9.0.2,2026-10-20T09:26:00Z
+LIVE-DEMO-027,Please add better filters for podcast episodes.,3,0,9.0.2,2026-10-20T09:27:00Z
+LIVE-DEMO-028,Music sounds distorted through bluetooth headphones.,1,0,9.0.2,2026-10-20T09:28:00Z
+LIVE-DEMO-029,I enjoy the recommendations but want fewer repeats.,4,0,9.0.2,2026-10-20T09:29:00Z
+LIVE-DEMO-030,The app freezes when I open an artist page.,1,0,9.0.2,2026-10-20T09:30:00Z

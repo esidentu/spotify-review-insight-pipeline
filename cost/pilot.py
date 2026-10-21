@@ -563,6 +563,8 @@ def run_local_stages(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def do_cold(args: argparse.Namespace) -> int:
+    if args.stop_after_enrichments is not None and args.stop_after_enrichments < 1:
+        raise ValueError("--stop-after-enrichments must be a positive integer")
     if args.execute and args.preflight_only:
         raise ValueError("Choose either --preflight-only or --execute, not both")
     if not args.execute and not args.preflight_only:
@@ -661,6 +663,7 @@ def do_cold(args: argparse.Namespace) -> int:
     representative_records: dict[str, dict[str, Any]] = {}
     reused_texts = 0
     enriched_this_run = 0
+    intentional_pause = False
     calls_before = len(read_jsonl(CALLS))
     errors = 0
     questions = questions_for_enrichment(harden_untrusted=HARDEN_UNTRUSTED_TEXT)
@@ -861,6 +864,22 @@ def do_cold(args: argparse.Namespace) -> int:
                 write_inflight(unresolved)
             if errors:
                 break
+            if args.stop_after_enrichments and enriched_this_run >= args.stop_after_enrichments:
+                intentional_pause = True
+                break
+
+    if intentional_pause:
+        run_state["status"] = "paused"
+        run_state["last_finished_at_utc"] = datetime.now(timezone.utc).isoformat()
+        run_state["saved_completed_records"] = sum(
+            record.get("status") == "completed" for record in existing.values()
+        )
+        write_json_atomic(RUN_STATE, run_state)
+        print(
+            f"Controlled interruption after saving {run_state['saved_completed_records']} completed records; "
+            f"{enriched_this_run} new enrichments in this pass. Resume with the same input, cache, and worker count."
+        )
+        return 0
 
     # Expand exact-text reuse to every source ID, retaining direct provenance.
     final_records: list[dict[str, Any]] = []
@@ -1024,6 +1043,7 @@ def do_cold(args: argparse.Namespace) -> int:
     run_state["status"] = "completed" if errors == 0 and run_record["failed_records"] == 0 else "paused_with_errors"
     run_state["last_finished_at_utc"] = datetime.now(timezone.utc).isoformat()
     run_state["last_failed_records"] = run_record["failed_records"]
+    run_state["saved_completed_records"] = run_record["completed_records"]
     write_json_atomic(RUN_STATE, run_state)
     print(f"Cold {CHECKPOINT_TAG} input stopped/saved: {run_record['completed_records']} completed, {run_record['quarantined_records']} quarantined, {run_record['failed_records']} failed; known Jev spend USD {spent} of {budget}.")
     if errors:
@@ -1069,6 +1089,7 @@ def main() -> int:
     cold.add_argument("--execute", action="store_true", help="explicitly authorize API requests for this command")
     cold.add_argument("--preflight-only", action="store_true", help="validate and reserve the whole input without sending API requests")
     cold.add_argument("--resume", action="store_true", help="resume a saved cold run with identical input, cache, labels, and worker count")
+    cold.add_argument("--stop-after-enrichments", type=int, help="pause cleanly after this many newly saved enrichment results; intended for a recovery demonstration")
     cold.add_argument("--workers", type=int, choices=(1, 2), help="worker count; defaults to the configured maximum of two")
     cold.add_argument("--input", default=str(SAMPLE), help="fixed checkpoint or arbitrary CSV with review_id, review_text, review_rating, review_likes, app_version, review_timestamp")
     cold.add_argument("--cache-from", help="reuse validated completed records from an earlier checkpoint")
