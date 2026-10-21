@@ -6,7 +6,7 @@ Reviewed against `Project Instructions/Multi Agent Large Data Processing Pipelin
 
 | Requirement | Evidence | Status and next action |
 |---|---|---|
-| Public GitHub repository | `https://github.com/esidentu/spotify-review-insight-pipeline` | Repository and `origin` remote exist. Push the current working changes, then inspect the final public state signed out. |
+| Public GitHub repository | `https://github.com/esidentu/spotify-review-insight-pipeline` | Complete: public repository exists, current `main` commit `bde97ca` is pushed, and local `main` is synced with `origin/main`. The latest push produced GitHub's advisory that `cost/pilot_calls.jsonl` is 57.90 MB (above the recommended 50 MB); GitHub accepted it. |
 | Full source ingestion profile and provenance | `grading/ingestion.json`, `Data/manifest.json` | Complete: 660,622 source rows profiled, with source hash and missingness documented. |
 | Final run and empty-text quarantine | `grading/records.jsonl`, `Data/final_scope_100000_plus_empty.csv`, `grading/run.json` | Complete for approved scope: 100,000 completed nonempty reviews plus 13 explicit `empty_review_text` quarantines. The assignment brief permits at least 100,000, but its proportional coverage rubric means this earns only partial coverage credit. |
 | Golden 50, field comparison and error analysis | `Data/golden_50_labeled.csv`, `cost/review_100000_quality.md` | Complete; includes identified bare-boycott mismatches and a `needs_review` example analysis. No output labels were silently changed. |
@@ -31,7 +31,7 @@ The assignment brief explicitly permits “all 660,622 (or at least 100,000)” 
 2. The synthetic adversarial checks and arbitrary-input offline preflight are complete; retain both the v1 injection failure and v2 result in the submitted artifacts.
 3. The 100,000 run demonstrates saved recovery; capture the required short interruption/resume recording.
 4. Create the Render Blueprint from the connected GitHub repository, deploy the SQLite-backed service, verify live API/dashboard values against saved calculations, and record the public URL and access instructions in the README.
-5. Push the prepared changes, inspect the public repository signed out, test setup in a clean environment, then submit the repository URL in the course portal.
+5. Inspect the public repository signed out, test setup in a clean environment, then submit the repository URL in the course portal. The current commit has already been pushed.
 
 ## Limits that must remain visible
 
