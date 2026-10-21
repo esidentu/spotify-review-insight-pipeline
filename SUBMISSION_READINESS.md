@@ -6,7 +6,7 @@ Reviewed against `Project Instructions/Multi Agent Large Data Processing Pipelin
 
 | Requirement | Evidence | Status and next action |
 |---|---|---|
-| Public GitHub repository | `https://github.com/esidentu/spotify-review-insight-pipeline` | Complete: public repository exists and local `main` is synced with `origin/main` after the final documentation update. The assignment DOCX is excluded by `.gitignore` and is not tracked. GitHub accepted the video and call ledger, while warning that each exceeds its recommended 50 MB size. |
+| Public GitHub repository | `https://github.com/esidentu/spotify-review-insight-pipeline` | Complete: public repository exists and the final audit documentation is published on `main`. The assignment DOCX is excluded by `.gitignore` and is not tracked. GitHub accepted the video and call ledger, while warning that each exceeds its recommended 50 MB size. |
 | Full source ingestion profile and provenance | `grading/ingestion.json`, `Data/manifest.json` | Complete: 660,622 source rows profiled, with source hash and missingness documented. |
 | Final run and empty-text quarantine | `grading/records.jsonl`, `Data/final_scope_100000_plus_empty.csv`, `grading/run.json` | Complete for approved scope: 100,000 completed nonempty reviews plus 13 explicit `empty_review_text` quarantines. The assignment brief permits at least 100,000, but its proportional coverage rubric means this earns only partial coverage credit. |
 | Golden 50, field comparison and error analysis | `Data/golden_50_labeled.csv`, `cost/review_100000_quality.md` | Complete; includes identified bare-boycott mismatches and a `needs_review` example analysis. No output labels were silently changed. |
