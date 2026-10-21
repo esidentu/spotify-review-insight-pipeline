@@ -12,13 +12,13 @@ We are building a repeatable program that reads Spotify reviews, asks an AI mode
 
 You manually labeled and approved the 50 examples in `Data/golden_50_labeled.csv`. Those are the **golden labels**: a human reference set we can compare with model results later. They are not examples sent to Jev, and their answers are not included in Jev prompts.
 
-### Jev: meaning-based labels
+### Jev: labels and bounded decisions
 
-Jev read each review text and returned a topic, intent, severity, and sentiment judgment. The program also asked Jev a yes/no-style verification question for a small, fixed sample. Jev did not choose the final rankings or write the pilot summaries.
+Jev read each review text and returned a topic, intent, severity, and sentiment judgment. The program also asked Jev a yes/no-style verification question for a deterministic sample. For the final deliverable, separate Jev Choice calls reviewed saved topic metrics and evidence to select a follow-up bucket and a next-cycle priority. The program still calculates the baseline ranking and renders the memo's numbers from saved claims.
 
 ### The local program: repeatable bookkeeping
 
-Python handles file reading, ID and source-hash checks, exact-text reuse, output validation, call and cost logging, topic grouping, arithmetic, ranking, and summary-file creation. Those jobs do not need a language model.
+Python handles file reading, ID and source-hash checks, exact-text reuse, output validation, call and cost logging, topic membership, arithmetic, baseline ranking, evidence checks, and memo rendering. Those jobs do not need a language model. Jev's group and memo decisions are separate saved roles in the final grading run.
 
 ### Workers and agents are different
 
@@ -88,9 +88,9 @@ Open the project's `cost` folder:
 
 The 100,000-review run is complete. It produced 100,000 completed rows from 78,099 distinct review texts. Jev made 69,651 new enrichment calls and 6,965 verification calls. Every request carried one review; two independent calls ran at a time. The one-review prompt and schema stayed the same as the one-worker pipeline. SDK retries were disabled, progress was checkpointed, and the request timeout was raised from the 10-second SDK default to 60 seconds after intermittent timeouts. Nine failed attempts were manually resumed; their usage remains unknown and their estimated charges remain reserved under the local cap. All final rows nevertheless have completed labels. The 10% verification sample completed.
 
-The 100,000-row run cost USD 3.119385 in known Jev usage. Cumulative known project usage is USD 3.505917; the local USD 8 cap has USD 4.492264 remaining after unresolved-call reserves. The TypeSafe Usage page showed USD 3.228, 88,910,604 tokens, and 75,711 requests for “All traffic / Last 24 hours” and still warns that statistics may be delayed. Keep the local ledger and this dashboard difference visible until they reconcile.
+The 100,000-row run cost USD 3.119385 in known Jev usage. The latest local call ledger, including bounded group/memo and synthetic resume calls, reports USD 3.511170432 known and holds USD 0.001818 unresolved-call reserve below the approved USD 8 cap. The TypeSafe Usage page's previously saved snapshot showed USD 3.228, 88,910,604 tokens, and 75,711 requests; the page warned that usage can be delayed. This provider snapshot is historical and had not reconciled to the local ledger when recorded.
 
-Quality review of the 100,000 output is recorded in `cost/review_100000_quality.md`. The user confirmed that 100,000 reviews is the intended final scope, consistent with the assignment brief's “all 660,622 (or at least 100,000)” wording. The 100,000-row grading export is in `grading/`; its zero-API self-check is `grading-self-check.json`. Coverage is complete (100,000/100,000), but the checker status is `review_required`: it found 24 unavailable-token fields across 12 failed attempts and no model-call evidence for group/memo roles, which ran locally. The checkpoint-before ID list is reconstructed from saved run/cache evidence and matches the logged 31,283-row checkpoint. The output review found a specific prompt gap for bare boycott slogans; completed model records remain unchanged and the gap is documented in the review report.
+Quality review of the 100,000 output is recorded in `cost/review_100000_quality.md`. The user approved 100,000 as the final scope, which meets the assignment brief's stated minimum of 100,000 but does not classify the other 560,609 nonempty rows; the rubric awards coverage proportionally. The 100,000-row grading export is in `grading/`; its zero-API self-check is `grading-self-check.json`. The checker accounts for every ID in this declared subset, but reports `review_required` for 24 unavailable-token fields across 12 failed attempts. Group and memo roles have actual saved call evidence. The assignment-scale `grading/checkpoint_before.json` is reconstructed from saved run/cache evidence and matches the logged 31,283-record checkpoint; the separate live synthetic interruption/resume recording and matching before/after snapshots are under `evidence/`. The output review found a specific prompt gap for bare boycott slogans; completed model records remain unchanged and the gap is documented in the review report. The remaining external step is submitting the public repository URL through the course portal.
 
 ## Important meanings
 

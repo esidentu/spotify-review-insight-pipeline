@@ -26,13 +26,19 @@ This report is calculated offline from saved call usage, run measurements, and e
 | cold-100000-20261020T213754Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 6965 | succeeded: 6965 | 3190014 | 0 | 139300 | 6965 | USD 0.133981 | priced usage |
 | cold-500-20261020T185608Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 1 | 379 | succeeded: 379 | 385992 | 0 | 60846 | 379 | USD 0.016212 | priced usage |
 | cold-500-20261020T185608Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 1 | 38 | succeeded: 38 | 17154 | 0 | 760 | 38 | USD 0.000720 | priced usage |
+| cold-custom-0736cdcd005a-20261021T015103Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | record-v1 | 1 | 2 | 30 | succeeded: 30 | 37169 | 0 | 4818 | 30 | USD 0.001561 | priced usage |
+| cold-custom-0736cdcd005a-20261021T015103Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 3 | succeeded: 3 | 1338 | 0 | 60 | 3 | USD 0.000056 | priced usage |
+| cold-custom-2e1f03ced275-20261021T020307Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | record-v1 | 1 | 2 | 30 | succeeded: 30 | 37169 | 0 | 4818 | 30 | USD 0.001561 | priced usage |
+| cold-custom-2e1f03ced275-20261021T020307Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 3 | succeeded: 3 | 1334 | 0 | 60 | 3 | USD 0.000056 | priced usage |
+| cold-custom-f5a801c0b3b7-20261021T014956Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | record-v1 | 1 | 2 | 30 | succeeded: 30 | 37169 | 0 | 4818 | 30 | USD 0.001561 | priced usage |
+| cold-custom-f5a801c0b3b7-20261021T014956Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 3 | succeeded: 3 | 1339 | 0 | 60 | 3 | USD 0.000056 | priced usage |
 | dashboard-finalization-100000 | finalization | group | typesafe | jev-1.13.0 | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | succeeded: 1 | 3180 | 0 | 101 | 1 | USD 0.000134 | priced usage |
 | dashboard-finalization-100000 | finalization | group | typesafe | jev-latest | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | failed: 1 | 0 | 0 | 0 | 0 | unavailable | priced usage |
 | dashboard-finalization-100000 | finalization | memo | typesafe | jev-1.13.0 | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | succeeded: 1 | 3196 | 0 | 95 | 1 | USD 0.000134 | priced usage |
 | worker-comparison-golden50-w1 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 1 | 50 | succeeded: 50 | 50825 | 0 | 8027 | 50 | USD 0.002135 | priced usage |
 | worker-comparison-golden50-w2 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 2 | 50 | succeeded: 50 | 50825 | 0 | 8027 | 50 | USD 0.002135 | priced usage |
 
-**Known API subtotal:** USD 3.506319.
+**Known API subtotal:** USD 3.511170.
 **Calls with incomplete or missing usage:** 13.
 
 ## Usage dashboard reconciliation
@@ -88,6 +94,9 @@ These notes record dashboard readings and checks of failed calls. TypeSafe warns
 | cold-100000-20261020T213754Z | cold | 100000 | cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c | 100000 | 83508 | 16492 | 78099 | 77899 | 2 | 380.724036 | 262.66 | unavailable | unavailable | unknown/not recorded |
 | cold-100000-20261020T213754Z | cold | 100000 | cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c | 100000 | 100000 | 0 | 78099 | 83586 | 2 | 1764.81076 | 56.66 | unavailable | unavailable | unknown/not recorded |
 | dashboard-finalization-100000 | finalization | 0 | fb050d3779f676c15854b81d18d5e1e611d13291adfb10953c1a0564b6604be3 | 0 | 0 | 0 | 0 | 0 | 1 | 0.521404 | 0.00 | unavailable | unavailable | unknown/not recorded |
+| cold-custom-f5a801c0b3b7-20261021T014956Z | cold | 30 | f5a801c0b3b74666bccc823e964a12f9b79b78c7f9625237648e3beb7d77d5c4 | 30 | 30 | 0 | 30 | 0 | 2 | 19.036084 | 1.58 | USD 0.053911 | USD 0.000054 | unknown/not recorded |
+| cold-custom-0736cdcd005a-20261021T015103Z | cold | 30 | 0736cdcd005add04a7ff7de9853c0c29faa0f19dea4fd75e873dcccda6d1ddb4 | 30 | 30 | 0 | 30 | 4 | 2 | 5.541814 | 5.41 | USD 0.053910 | USD 0.000054 | unknown/not recorded |
+| cold-custom-2e1f03ced275-20261021T020307Z | cold | 30 | 2e1f03ced275738faea40bee2379dc77d597f0d349b0172a2814c962bf96ff22 | 30 | 30 | 0 | 30 | 4 | 2 | 6.770184 | 4.43 | USD 0.053904 | USD 0.000054 | unknown/not recorded |
 
 Costs are phase totals across logged model roles. Request-duration sums are not substituted for wall-clock time. Local compute is reported separately and remains unknown unless measured or estimated in the run log.
 
@@ -95,17 +104,17 @@ Costs are phase totals across logged model roles. Request-duration sums are not 
 
 Target counts from the editable projection file: source_rows=660622, nonempty_reviews=660609, empty_text_quarantines=13, distinct_nonempty_texts=484189.
 Spend budget: USD 8.0.
-Observed cold work units by role: enrich_primary=78299, enrich_fallback=0, verify=7810, group=0, memo=0.
+Observed cold work units by role: enrich_primary=78389, enrich_fallback=0, verify=7819, group=0, memo=0.
 Only calls with complete token usage are used to calibrate per-work-unit cost. Failed calls with missing usage remain listed as unresolved and are excluded from calibration. Request counts are recorded as operational metadata, not priced as token usage.
 
 | Scenario | API projection | Estimated wall time | Budget check | Status |
 |---|---|---|---|---|
-| 10k_forecast_from_500 | USD 0.356861 | 612.18 sec | within budget | complete projection |
-| full_base | USD 21.682423 | 37195.03 sec | OVER BUDGET | complete projection |
-| final_100000_at_10k_unique_rate | USD 3.783091 | 6489.69 sec | within budget | complete projection |
-| final_100000_at_population_unique_rate | USD 3.281159 | 5628.71 sec | within budget | complete projection |
-| final_100000_no_reuse | USD 4.478090 | 7681.92 sec | within budget | complete projection |
-| full_no_reuse_comparison | USD 29.582670 | 50747.47 sec | OVER BUDGET | complete projection |
+| 10k_forecast_from_500 | USD 0.356944 | 1938.25 sec | within budget | complete projection |
+| full_base | USD 21.687497 | 117760.49 sec | OVER BUDGET | complete projection |
+| final_100000_at_10k_unique_rate | USD 3.783976 | 20546.52 sec | within budget | complete projection |
+| final_100000_at_population_unique_rate | USD 3.281927 | 17821.25 sec | within budget | complete projection |
+| final_100000_no_reuse | USD 4.479138 | 24321.16 sec | within budget | complete projection |
+| full_no_reuse_comparison | USD 29.589593 | 160667.89 sec | OVER BUDGET | complete projection |
 
 Projection cost uses per-stage charges per logical work unit from cold calls, including retries logged under each operation. Runtime uses recorded stage wall times and does not assume unmeasured concurrency speedups.
 

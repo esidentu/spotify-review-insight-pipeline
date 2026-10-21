@@ -37,4 +37,4 @@ The grading contract says bare boycott slogans are `unclear` unless they include
 
 ## Decision
 
-Keep the shared topic, intent, and severity definitions. The comparison does not support a broad rule rewrite. Carry forward the explicit bare-boycott exception, preserve the current `needs_review` flag as an attention cue, and disclose the entity extraction convention. The user confirmed that the accepted final scope is 100,000 reviews; the next project stage is to prepare the grading export for that declared scope and run the zero-API mechanical check.
+Keep the shared topic, intent, and severity definitions. The comparison does not support a broad rule rewrite. Carry forward the explicit bare-boycott exception, preserve the current `needs_review` flag as an attention cue, and disclose the entity extraction convention. The user approved 100,000 reviews as the final scope. The grading export and zero-API mechanical check have since been completed; course-portal submission remains the final external step.

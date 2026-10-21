@@ -14,10 +14,10 @@ The local checker confirms 100,000 completed classifications, 13 quarantines, no
 |---|---|
 | Deliverable quality | [Architecture and labels](PROJECT_GUIDE.md), [grading export](grading/README.md), [decision memo](grading/memo.md), [reproducible claims](grading/claims.csv) |
 | Testing and evaluation | [Golden 50 comparison and error analysis](cost/review_100000_quality.md), [mechanical self-check](grading-self-check.json), [planted-error and prompt-injection checks](grading/tests/README.md), [pilot and offline calculator](cost/README.md) |
-| Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [checkpoint evidence](grading/checkpoint_before.json), [resume evidence](grading/checkpoint_after.json), [local dashboard and deployment files](dashboard/README.md) |
+| Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [live interruption/resume snapshots and recording](evidence/README.md), [database-backed dashboard](dashboard/README.md) |
 | Remaining requirements | [Submission readiness and completion plan](SUBMISSION_READINESS.md) |
 
-The real synthetic interruption/resume demonstration, checkpoint evidence, and screen recording are in [`evidence/`](evidence/README.md). Course-portal submission remains open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
+The real synthetic interruption/resume demonstration, matching before/after snapshots, and screen recording are in [`evidence/`](evidence/README.md). The separate `grading/checkpoint_before.json` for the assignment-scale run is reconstructed from saved run evidence, not captured live. Course-portal submission remains open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
 
 ## Source provenance
 
@@ -48,7 +48,7 @@ flowchart LR
   I --> J
   J --> K[Read-only backend API]
   K --> L[Dashboard]
-  M[Render Web Service<br/>deployment pending] -. hosts .-> K
+  M[Render Web Service<br/>live on Free plan] -. hosts .-> K
   M -. hosts .-> L
   C -. bounded requests, spend stop, saved resume .-> H
 ```
@@ -106,7 +106,7 @@ Never put API keys in code, logs, prompts, browser code, screenshots, or submitt
 
 Measure the fixed cold and warm `cost_100.csv` pilot first, then refresh estimates at 500 and 10,000 reviews. The assignment accepts a final classification run of at least 100,000 nonempty reviews; the full source has 660,609 nonempty reviews and 13 empty-text quarantines. Requests must contain at most 50 reviews. Start with one worker, then try two within measured capacity. The current runner keeps one review per request and overlaps up to two independent calls; each result is validated and durably saved before its slot is reused. Resume requires the same input, cache, labels, and worker count.
 
-The reproducible ranking, evaluation results, interruption/recovery evidence, and local database-backed dashboard are in the repository. The Docker image and free Render Blueprint are prepared, but deployment, live verification, and the public URL remain open; see [`SUBMISSION_READINESS.md`](SUBMISSION_READINESS.md).
+The reproducible ranking, evaluation results, interruption/recovery evidence, and database-backed dashboard are in the repository. The dashboard is deployed and verified at [https://spotify-review-insights-e5lu.onrender.com](https://spotify-review-insights-e5lu.onrender.com); see [`SUBMISSION_READINESS.md`](SUBMISSION_READINESS.md) for the remaining portal-submission step and evidence limits.
 
 ## 100,000-row grading export
 
@@ -131,7 +131,7 @@ Build a SQLite database from the saved 100,000-row outputs and run the local rea
 .\.venv\Scripts\python.exe dashboard\server.py
 ```
 
-Open `http://127.0.0.1:8765/`. See [`dashboard/README.md`](dashboard/README.md) for its API and deployment preparation. The live service has not been deployed or verified yet. The local database stores Jev's saved grouping follow-up, selected priority, and the claim-checked recommendation memo.
+Open `http://127.0.0.1:8765/`. See [`dashboard/README.md`](dashboard/README.md) for its API and deployment details. The live service is at [https://spotify-review-insights-e5lu.onrender.com](https://spotify-review-insights-e5lu.onrender.com). The local database stores Jev's saved grouping follow-up, selected priority, and the claim-checked recommendation memo.
 
 ## Rebuild ranking without model calls
 
