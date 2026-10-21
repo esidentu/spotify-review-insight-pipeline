@@ -2,6 +2,50 @@
 
 This project analyzes the supplied historical Spotify review extract using a staged, auditable pipeline. The 100-, 500-, and 10,000-review Jev checkpoints have been run and saved. See [PROJECT_GUIDE.md](PROJECT_GUIDE.md) for a plain-language walkthrough of the work, labels, costs, and next steps.
 
+## Final assignment status
+
+The saved run covers the user-approved 100,000-review subset, plus all 13 empty-text source rows as quarantines. The full 660,622-row source was profiled. The assignment brief accepts at least 100,000 rows, but its coverage rubric is proportional, so this partial scope earns less coverage credit than a full-corpus run. The separate grading contract describes the full corpus as its target. See [submission readiness](SUBMISSION_READINESS.md) for the exact implications and remaining work.
+
+The local checker confirms 100,000 completed classifications, 13 quarantines, no missing in-scope IDs, and 21,901 valid exact-text cache reuses. Its status remains `review_required`: usage is unavailable for 12 failed calls and the saved run lacks model-call evidence for the `group` and `memo` roles. The dashboard is local only; there is no live URL yet. No evidence is claimed for tests or recordings that have not been performed.
+
+## Rubric evidence map
+
+| Rubric area | Evidence |
+|---|---|
+| Deliverable quality | [Architecture and labels](PROJECT_GUIDE.md), [grading export](grading/README.md), [decision memo](grading/memo.md), [reproducible claims](grading/claims.csv) |
+| Testing and evaluation | [Golden 50 comparison and error analysis](cost/review_100000_quality.md), [mechanical self-check](grading-self-check.json), [pilot and offline calculator](cost/README.md) |
+| Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [checkpoint evidence](grading/checkpoint_before.json), [resume evidence](grading/checkpoint_after.json), [local dashboard](dashboard/README.md) |
+| Remaining requirements | [Submission readiness and completion plan](SUBMISSION_READINESS.md) |
+
+The prompt-injection and planted-error tests, short interruption/resume recording, executed group/memo model roles, and deployed dashboard/backend/database are still open. The current dashboard uses a locally generated memo rather than an AI-generated recommendation.
+
+## Source provenance
+
+Dataset: [BwandoWando, 3.4 Million Spotify Google Store Reviews, version 2](https://www.kaggle.com/datasets/bwandowando/3-4-million-spotify-google-store-reviews), published as CC0: Public Domain. The supplied course extract `Data/spotify_reviews_18months.csv` has SHA-256 `1fc85de68a304dd8978b537cfa58793d5f41cbaf417fa32cb53899f83a2fcef6`. The raw CSV is excluded from this repository; obtain it from the course materials before rebuilding the sample.
+
+## Architecture and data trace
+
+```mermaid
+flowchart LR
+  A[Input CSV] --> B[Python ingest, profile, exact-text cache]
+  B --> C[Jev enrich]
+  C --> D[Jev independent verify sample]
+  D --> E[Python group into topic buckets]
+  E --> F[Python aggregate and rank]
+  F --> G[Local memo template]
+  B --> H[(Saved JSONL and checkpoints)]
+  C --> H
+  D --> H
+  F --> I[(Local SQLite database)]
+  G --> I
+  I --> J[Local HTTP API and dashboard]
+  C -. bounded retries, budget stop, resume .-> H
+```
+
+The historical 100,000 run used Jev for enrichment and verification; Python created broad topic buckets, ranked them, and templated the memo. This does not yet satisfy the assignment's executed `group` and `memo` model-role evidence.
+
+Example trace: review `553d99de-099a-4413-b9dd-4f4fe508f36a` has source text “Removed all the basic features.” The saved enrichment labels it `usability` / `complaint`, severity 3, with an exact-text evidence quote. Its field confidence was below the 0.5 review threshold, so `needs_review=true`; the verification record stores support probability 0.57, and `grading/calls.jsonl` records a successful verifier request for the ID. The review belongs to `topic-usability`, ranked first with 13,886 complaints and a 37,501 severity sum. Those figures are `r01-complaint_count`, `r01-severity_sum`, and `r01-priority_score` in `grading/claims.csv`, cited in the decision memo. An ambiguous-label example and its handling are discussed in the [quality review](cost/review_100000_quality.md).
+
 ## Project status
 
 - Source dataset is in `Data/`; its full CSV is excluded from Git by `.gitignore`.
@@ -22,6 +66,16 @@ Use Python 3.11 or newer. The local pipeline uses the project virtual environmen
 2. Set the pilot spend ceiling and editable rates in `cost/projection.json` and `cost/rates.csv` before a paid run.
 3. Use the offline calculator instructions in `cost/README.md` to replay saved usage without credentials or API calls.
 
+For a clean Windows setup, create the virtual environment and install the pinned SDK dependency:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+Offline replay and ranking do not need an API key. Model requests need a valid TypeSafe key and the separate explicit `--execute` command.
+
 The current cumulative local stop limit is USD 8.00. The earlier 100-, 500-, and 10,000-review runs were performed under the previous USD 1.00 cap. The deterministic 100,000-review input can be prepared offline with `\.venv\Scripts\python.exe Data\prepare_final_100000.py`. Run the offline readiness check with `\.venv\Scripts\python.exe cost\pilot_preflight.py`; it does not contact TypeSafe. Paid cold commands are documented in `cost/README.md`; warm runs and offline cost replay make no provider calls. The cap is local and does not configure provider-side billing limits.
 
 Never put API keys in code, logs, prompts, browser code, screenshots, or submitted artifacts.
@@ -34,7 +88,7 @@ The reproducible ranking, evaluation results, interruption/recovery evidence, an
 
 ## 100,000-row grading export
 
-The selected 100,000-row input is `Data/final_100000.csv`. Its grading adapter is in [`grading/`](grading/), including the exact run manifest, full-source ingestion profile, completed records, membership, ranking, claims, actual provider-call evidence, checkpoint snapshots, and decision memo. Review the Golden 50 and `needs_review` analysis in [`cost/review_100000_quality.md`](cost/review_100000_quality.md).
+The selected 100,000-row input is `Data/final_100000.csv`; the grading input `Data/final_scope_100000_plus_empty.csv` adds all 13 empty-text source rows for explicit quarantine. Its grading adapter is in [`grading/`](grading/), including the exact run manifest, full-source ingestion profile, completed records, membership, ranking, claims, actual provider-call evidence, checkpoint snapshots, and decision memo. Review the Golden 50 and `needs_review` analysis in [`cost/review_100000_quality.md`](cost/review_100000_quality.md).
 
 Run the zero-API self-check with the prepared local reference:
 
@@ -42,7 +96,7 @@ Run the zero-API self-check with the prepared local reference:
 .\.venv\Scripts\python.exe Data\check_submission.py check --reference grading-reference.json --submission grading --out grading-self-check.json
 ```
 
-The check reports 100,000/100,000 completed IDs and `review_required` for unavailable usage on failed calls and missing group/memo model-call roles. Those stages used local deterministic code and are documented in `grading/local_stages.jsonl`; the report is saved outside the grading folder at `grading-self-check.json`.
+The report is saved as [`grading-self-check.json`](grading-self-check.json). It reports 100,013/100,013 IDs accounted for, 100,000 completed and 13 quarantined; `review_required` remains because 12 failed calls have unknown usage and the historical run has no executed group/memo model-call roles. Those stages used local deterministic code, as documented in `grading/local_stages.jsonl`.
 
 The historical run used the original prompts in `prompts/enrich.md` and `prompts/verify.md`. The contract's explicit bare-boycott exception was added afterward in `prompts/enrich-v2.md` and `prompts/verify-v2.md`; those versioned prompts do not retroactively change the saved labels or call evidence.
 

@@ -40,9 +40,11 @@ def write_json(path: Path, value: dict) -> None:
 
 
 def write_jsonl(path: Path, rows: list[dict]) -> None:
-    with path.open("w", encoding="utf-8", newline="\n") as stream:
+    temporary = path.with_name(path.name + ".tmp")
+    with temporary.open("w", encoding="utf-8", newline="\n") as stream:
         for row in rows:
             stream.write(json.dumps(row, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n")
+    temporary.replace(path)
 
 
 def write_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
@@ -68,20 +70,30 @@ def canonical_fields(record: dict) -> tuple:
 
 def main() -> None:
     existing = {path.name for path in OUT.iterdir()} if OUT.exists() else set()
-    if existing - {"ingestion.json"}:
-        raise SystemExit(f"Refusing to overwrite nonempty output directory: {OUT}")
+    expected_outputs = {
+        "run.json", "records.jsonl", "membership.csv", "ranking.csv", "claims.csv",
+        "checkpoint_before.json", "checkpoint_after.json", "calls.jsonl",
+        "local_stages.jsonl", "memo.md", "README.md",
+    }
+    if existing - expected_outputs - {"ingestion.json"}:
+        raise SystemExit(f"Unexpected files in grading output directory: {sorted(existing - expected_outputs - {'ingestion.json'})}")
     OUT.mkdir(parents=True, exist_ok=True)
 
-    analysis_path = DATA / "final_100000.csv"
+    analysis_path = DATA / "final_scope_100000_plus_empty.csv"
     analysis = read_csv(analysis_path)
     source_by_id = {row["review_id"]: row for row in analysis}
-    if len(analysis) != 100_000 or len(source_by_id) != 100_000:
-        raise SystemExit("The prepared analysis input must contain 100,000 unique IDs.")
+    if len(analysis) != 100_013 or len(source_by_id) != 100_013:
+        raise SystemExit("The grading input must contain 100,000 selected reviews plus 13 empty-text rows.")
+    empty_ids = {row["review_id"] for row in analysis if not row["review_text"].strip()}
+    if len(empty_ids) != 13:
+        raise SystemExit(f"The grading input must contain exactly 13 empty-text rows; found {len(empty_ids)}.")
+    selected_order = [row["review_id"] for row in analysis if row["review_id"] not in empty_ids]
 
     completed = read_jsonl(COST / "pilot_records_100000_complete.jsonl")
     record_by_id = {row["review_id"]: row for row in completed}
-    if len(completed) != 100_000 or set(record_by_id) != set(source_by_id):
-        raise SystemExit("Completed output IDs do not exactly match Data/final_100000.csv.")
+    selected_ids = set(source_by_id) - empty_ids
+    if len(completed) != 100_000 or set(record_by_id) != selected_ids:
+        raise SystemExit("Completed output IDs do not exactly match the 100,000 selected nonempty reviews.")
 
     # Give every exact-text reuse a direct link to an in-scope original that
     # has a successful enrichment call. Identical text groups have identical
@@ -97,7 +109,8 @@ def main() -> None:
             successful_enrich_ids[ids[0]].append(position)
 
     by_text: dict[str, list[str]] = defaultdict(list)
-    for rid, source in source_by_id.items():
+    for rid in selected_order:
+        source = source_by_id[rid]
         by_text[source["review_text"]].append(rid)
 
     roots: dict[str, str] = {}
@@ -113,7 +126,7 @@ def main() -> None:
         roots[text] = root_id
 
     records = []
-    for rid in source_by_id:
+    for rid in selected_order:
         out_record = {key: record_by_id[rid][key] for key in RECORD_FIELDS}
         root_id = roots[source_by_id[rid]["review_text"]]
         if rid != root_id:
@@ -123,6 +136,17 @@ def main() -> None:
             if optional in record_by_id[rid]:
                 out_record[optional] = record_by_id[rid][optional]
         records.append(out_record)
+    for rid in sorted(empty_ids):
+        records.append({
+            "review_id": rid,
+            "source_sha256": hashlib.sha256(json.dumps(
+                [source_by_id[rid][field] for field in (
+                    "review_id", "review_text", "review_rating", "review_likes", "app_version", "review_timestamp"
+                )], ensure_ascii=False, separators=(",", ":")
+            ).encode("utf-8")).hexdigest(),
+            "status": "quarantined",
+            "reason": "empty_review_text",
+        })
     write_jsonl(OUT / "records.jsonl", records)
 
     subset_hash = exact_file_sha(analysis_path)
@@ -132,10 +156,10 @@ def main() -> None:
         "analysis_sha256": subset_hash,
         "classification_input_fields": ["review_text"],
         "allow_multi_issue": False,
-        "declared_scope": "100000-row deterministic subset; full source ingestion profile retained separately",
+        "declared_scope": "100000 deterministic selected nonempty reviews plus all 13 empty-text source rows quarantined; full source ingestion profile retained separately",
         "source_file": "Data/spotify_reviews_18months.csv",
         "source_file_sha256": "1fc85de68a304dd8978b537cfa58793d5f41cbaf417fa32cb53899f83a2fcef6",
-        "analysis_file": "Data/final_100000.csv",
+        "analysis_file": "Data/final_scope_100000_plus_empty.csv",
         "pipeline_run_id": RUN_ID,
         "labeling_review": "See review_100000_quality.md; completed records preserved as produced.",
     })
@@ -253,7 +277,7 @@ def main() -> None:
         "",
         "## Recommendation",
         "",
-        "Prioritize investigation of usability in the next planning cycle. It has the highest baseline priority score in this subset: 13,886 complaint/cancellation reviews, a severity sum of 37,501, and mean severity 2.700634 (claims `r02-complaint_count`, `r02-severity_sum`, `r02-mean_severity`, `r02-priority_score`). Billing ranks second with score 20,978 and playback third with score 19,747 (claims `r03-priority_score`, `r04-priority_score`). This is a prioritization signal from the selected sample; validate it with product telemetry and targeted user research before treating it as a population-wide conclusion.",
+        "Prioritize investigation of usability in the next planning cycle. It has the highest baseline priority score in this subset: 13,886 complaint/cancellation reviews, a severity sum of 37,501, and mean severity 2.700634 (claims `r01-complaint_count`, `r01-severity_sum`, `r01-mean_severity`, `r01-priority_score`). Billing ranks third with score 20,978 and playback fourth with score 19,747 (claims `r03-priority_score`, `r04-priority_score`). The second-ranked `other` bucket has a score of 29,493 but is too broad to directly identify a product investment (claim `r02-priority_score`). This is a prioritization signal from the selected sample; validate it with product telemetry and targeted user research before treating it as a population-wide conclusion.",
         "",
         "## Baseline ranking",
         "",
@@ -274,17 +298,17 @@ def main() -> None:
         "",
         "The Golden 50 comparison, `needs_review` analysis, and the 142 bare-`Boycott` intent mismatches are documented in `../cost/review_100000_quality.md`. The completed labels are preserved as produced. The enrichment and verification stages used Jev; grouping and memo generation used local deterministic code, as recorded in `local_stages.jsonl`.",
         "",
-        "The checker expects successful model-call evidence for `group` and `memo`; those provider calls were not made in this run. It also requires numeric token usage on failed-call entries even when the provider returned no usage. The call log preserves those unknown values as null, so a review-required self-check is expected for those evidence gaps.",
+        "The checker expects successful model-call evidence for `group` and `memo`; those provider calls were not made in this run. It also requires numeric token usage on failed-call entries even when the provider returned no usage. The call log preserves those unknown values as null, so a review-required self-check is expected for those evidence gaps. The 13 empty source texts are included as explicit `empty_review_text` quarantines; they received no model calls.",
         "",
     ]
     (OUT / "memo.md").write_text("\n".join(lines), encoding="utf-8")
     (OUT / "README.md").write_text(
         "# 100,000-row grading export\n\n"
-        "This folder is the grading adapter for the user's declared 100,000-row scope. "
-        "`run.json` identifies the exact analysis subset; `ingestion.json` profiles the full source file. "
+        "This folder is the grading adapter for the declared 100,000-nonempty-review scope. "
+        "`run.json` identifies 100,000 selected nonempty reviews plus all 13 empty-text quarantines; `ingestion.json` profiles the full source file. "
         "The package was built offline from saved outputs and call logs. No provider requests were made.\n\n"
         "Read `memo.md` for the recommendation and ranking, `../cost/review_100000_quality.md` for the human-label and needs-review analysis, and `local_stages.jsonl` for the deterministic grouping/memo stages. `checkpoint_before.json` is reconstructed from the saved input/cache/call ordering and matches the logged 31,283-record checkpoint; it was not a separately captured snapshot file at runtime.\n\n"
-        "Known evidence gaps: no model calls were made for group or memo, although the checker asks for those roles; nine failed attempts have unavailable token usage, preserved as null. The completed bare-`Boycott` labels also remain as produced and are documented in the quality review.\n",
+        "Known evidence gaps: no model calls were made for group or memo, although the checker asks for those roles; 12 failed attempts in this selected scope have unavailable token usage (nine during the 100,000 run and three during earlier checkpoints), preserved as null. The completed bare-`Boycott` labels also remain as produced and are documented in the quality review.\n",
         encoding="utf-8",
     )
     print(f"Built {OUT} for {len(records):,} records, {len(call_rows):,} retained provider-call attempts, and {len(before_ids):,} reconstructed checkpoint IDs.")

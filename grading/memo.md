@@ -6,7 +6,7 @@ This memo covers the deterministic 100,000-row subset, not the entire 660,622-ro
 
 ## Recommendation
 
-Prioritize investigation of usability in the next planning cycle. It has the highest baseline priority score in this subset: 13,886 complaint/cancellation reviews, a severity sum of 37,501, and mean severity 2.700634 (claims `r02-complaint_count`, `r02-severity_sum`, `r02-mean_severity`, `r02-priority_score`). Billing ranks second with score 20,978 and playback third with score 19,747 (claims `r03-priority_score`, `r04-priority_score`). This is a prioritization signal from the selected sample; validate it with product telemetry and targeted user research before treating it as a population-wide conclusion.
+Prioritize investigation of usability in the next planning cycle. It has the highest baseline priority score in this subset: 13,886 complaint/cancellation reviews, a severity sum of 37,501, and mean severity 2.700634 (claims `r01-complaint_count`, `r01-severity_sum`, `r01-mean_severity`, `r01-priority_score`). Billing ranks third with score 20,978 and playback fourth with score 19,747 (claims `r03-priority_score`, `r04-priority_score`). The second-ranked `other` bucket has a score of 29,493 but is too broad to directly identify a product investment (claim `r02-priority_score`). This is a prioritization signal from the selected sample; validate it with product telemetry and targeted user research before treating it as a population-wide conclusion.
 
 ## Baseline ranking
 
@@ -27,4 +27,4 @@ The table follows the required baseline: complaint count multiplied by mean seve
 
 The Golden 50 comparison, `needs_review` analysis, and the 142 bare-`Boycott` intent mismatches are documented in `../cost/review_100000_quality.md`. The completed labels are preserved as produced. The enrichment and verification stages used Jev; grouping and memo generation used local deterministic code, as recorded in `local_stages.jsonl`.
 
-The checker expects successful model-call evidence for `group` and `memo`; those provider calls were not made in this run. It also requires numeric token usage on failed-call entries even when the provider returned no usage. The call log preserves those unknown values as null, so a review-required self-check is expected for those evidence gaps.
+The checker expects successful model-call evidence for `group` and `memo`; those provider calls were not made in this run. It also requires numeric token usage on failed-call entries even when the provider returned no usage. The call log preserves those unknown values as null, so a review-required self-check is expected for those evidence gaps. The 13 empty source texts are included as explicit `empty_review_text` quarantines; they received no model calls.

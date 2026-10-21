@@ -1,12 +1,12 @@
 {
   "allow_multi_issue": false,
-  "analysis_count": 100000,
-  "analysis_file": "Data/final_100000.csv",
-  "analysis_sha256": "cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c",
+  "analysis_count": 100013,
+  "analysis_file": "Data/final_scope_100000_plus_empty.csv",
+  "analysis_sha256": "fb050d3779f676c15854b81d18d5e1e611d13291adfb10953c1a0564b6604be3",
   "classification_input_fields": [
     "review_text"
   ],
-  "declared_scope": "100000-row deterministic subset; full source ingestion profile retained separately",
+  "declared_scope": "100000 deterministic selected nonempty reviews plus all 13 empty-text source rows quarantined; full source ingestion profile retained separately",
   "labeling_review": "See review_100000_quality.md; completed records preserved as produced.",
   "pipeline_run_id": "cold-100000-20261020T213754Z",
   "source_file": "Data/spotify_reviews_18months.csv",

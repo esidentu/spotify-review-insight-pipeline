@@ -71,17 +71,17 @@
   "coverage": {
     "accounted_fraction": 1.0,
     "duplicate_ids": 0,
-    "expected": 100000,
+    "expected": 100013,
     "invalid_or_unresolved": 0,
     "labelable": 100000,
     "labelable_completion_fraction": 1.0,
     "missing": 0,
-    "quarantined": 0,
-    "received_lines": 100000,
-    "unique_expected_ids": 100000,
+    "quarantined": 13,
+    "received_lines": 100013,
+    "unique_expected_ids": 100013,
     "valid_cache_reuses": 21901,
     "valid_completed": 100000,
-    "valid_completion_fraction": 1.0
+    "valid_completion_fraction": 0.99987
   },
   "examples": [
     {
@@ -139,8 +139,8 @@
     "local_stages.jsonl": "835679994664b628c827569fbf58b70883a8abc10075776a2f5b7949c9f132b9",
     "membership.csv": "14e8bb585d9cfa25f67706d221a367943f0b8b2ef7086c042568a42cded1f13c",
     "ranking.csv": "84d48eba125bc493b4d6873ea26983ca8ef2a9fd5b463a2980a4e87e0916c137",
-    "records.jsonl": "c2f8793e24ff8279c56ddb5d025a8e0e44386ed6a8b29463bf498b276bde6da3",
-    "run.json": "279e91fb4afbce9c483ead365847c9ad05799a360da3fa48cb9fd922e5d721a0"
+    "records.jsonl": "35ef03b7355f85f7f6f1a7f4c93f9e8c8452d25dab1286785ccc38586447de1f",
+    "run.json": "7659c28e8d4729d0c79810d1512f0564f0a9143d09b14710ac4f4dd8500d1664"
   },
   "issue_counts": {
     "invalid_usage": 24,
@@ -156,7 +156,7 @@
     "official": false,
     "status": "not_supplied"
   },
-  "reference_sha256": "bdf8cb373d13b4e113d40da09006d6182fe9b07dc67422088cb538f53d8dbfa3",
+  "reference_sha256": "1c3f2b83cd499772799eb39c5b999f56082c6b77b8300833bc28b0edca50065a",
   "reported_calls": 86021,
   "reported_input_tokens": 83368064,
   "reported_output_tokens": 12713394,

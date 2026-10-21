@@ -63,7 +63,8 @@
     "analysis": "Next 10,000; uniform deterministic development and budget checkpoint before the required full-corpus run.",
     "checkpoint": "First 500 of the analysis sample.",
     "cost_pilot": "First 100 of the checkpoint sample; fixed input for the required measured cost/runtime calculator.",
-    "final_100000": "100,000 eligible source reviews with the lowest SHA-256(seed + ':' + review_id) ranks; includes Golden 50 review texts, but never their expected labels."
+    "final_100000": "100,000 eligible source reviews with the lowest SHA-256(seed + ':' + review_id) ranks; includes Golden 50 review texts, but never their expected labels.",
+    "final_scope_100000_plus_empty": "100,000 deterministic selected nonempty reviews plus all 13 empty-text source rows; the empty rows are quarantined and receive no model calls."
   },
   "files": {
     "spotify_reviews_18months.csv": {
@@ -89,6 +90,10 @@
     "final_100000.csv": {
       "bytes": 14733673,
       "sha256": "cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c"
+    },
+    "final_scope_100000_plus_empty.csv": {
+      "bytes": 14734591,
+      "sha256": "fb050d3779f676c15854b81d18d5e1e611d13291adfb10953c1a0564b6604be3"
     }
   },
   "assignment_scope": {
@@ -104,6 +109,8 @@
     "grading_contract": "GRADING_CONTRACT.md",
     "cost_calculator_spec": "COST_CALCULATOR.md",
     "selected_final_rows": 100000,
-    "selected_final_input": "final_100000.csv"
+    "selected_final_input": "final_100000.csv",
+    "quarantined_empty_rows": 13,
+    "grading_input": "final_scope_100000_plus_empty.csv"
   }
 }
