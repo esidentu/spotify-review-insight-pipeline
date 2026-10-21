@@ -809,8 +809,10 @@ def do_cold(args: argparse.Namespace) -> int:
         }
         if any(run_state.get(key) != value for key, value in expected_config.items()):
             raise ValueError("Resume configuration differs from the saved run; keep input, cache, labels, and worker count unchanged")
+        if run_state.get("status") == "completed" and AI_GROUPING.exists() and AI_RECOMMENDATION.exists():
+            raise ValueError("Saved run and Jev group/memo decisions are already complete; refusing duplicate paid work")
         if run_state.get("status") == "completed":
-            raise ValueError("Saved run is already complete; refusing duplicate paid work")
+            print("Saved labels are complete; resume will skip them and run only missing Jev group/memo decisions.")
         run_state["status"] = "running"
         run_state["attempts"] = int(run_state.get("attempts", 0)) + 1
         run_state["last_started_at_utc"] = datetime.now(timezone.utc).isoformat()
