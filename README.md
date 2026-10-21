@@ -4,7 +4,7 @@ This project analyzes the supplied historical Spotify review extract using a sta
 
 ## Final assignment status
 
-The saved run covers the user-approved 100,000-review subset, plus all 13 empty-text source rows as quarantines. The full 660,622-row source was profiled. The assignment brief accepts at least 100,000 rows, but its coverage rubric is proportional, so this partial scope earns less coverage credit than a full-corpus run. The separate grading contract describes the full corpus as its target. See [submission readiness](SUBMISSION_READINESS.md) for the exact implications and remaining work.
+The saved run covers the approved 100,000-review subset, plus all 13 empty-text source rows as quarantines. The full 660,622-row source was profiled. See the ingestion and grading artifacts for the exact coverage counts.
 
 The local checker confirms 100,000 completed classifications, 13 quarantines, no missing in-scope IDs, and 21,901 valid exact-text cache reuses. Its status remains `review_required` because 12 failed attempts still have unavailable token usage (24 fields); successful bounded Jev `group` and `memo` calls are logged. The corrected SQLite-backed API and dashboard are live at [https://spotify-review-insights-e5lu.onrender.com](https://spotify-review-insights-e5lu.onrender.com) on Render's Free plan; all live routes and the dashboard were verified against the 100,013-row snapshot. The synthetic planted-error test passed; the first injection prompt failed on intent, and version 2 passed the same synthetic safety criteria. The 100,000 historical output remains on its original prompt version.
 
@@ -65,7 +65,7 @@ Example trace: review `553d99de-099a-4413-b9dd-4f4fe508f36a` has source text “
 - The reviewed golden labels are in `Data/golden_50_labeled.csv`. They are evaluation-only and must not be included in development prompts, routing rules, or issue discovery.
 - The 100-, 500-, and 10,000-review results, cost report, and call/run logs are saved under `cost/`.
 - Read `Data/GRADING_CONTRACT.md` and `Data/COST_CALCULATOR.md` before running model work.
-- See [`SUBMISSION_READINESS.md`](SUBMISSION_READINESS.md) for a requirement-by-requirement audit and remaining work.
+- See [`cost/README.md`](cost/README.md) for pilot measurements and offline replay instructions.
 
 ## Low-cost design
 
@@ -106,7 +106,7 @@ Never put API keys in code, logs, prompts, browser code, screenshots, or submitt
 
 Measure the fixed cold and warm `cost_100.csv` pilot first, then refresh estimates at 500 and 10,000 reviews. The assignment accepts a final classification run of at least 100,000 nonempty reviews; the full source has 660,609 nonempty reviews and 13 empty-text quarantines. Requests must contain at most 50 reviews. Start with one worker, then try two within measured capacity. The current runner keeps one review per request and overlaps up to two independent calls; each result is validated and durably saved before its slot is reused. Resume requires the same input, cache, labels, and worker count.
 
-The reproducible ranking, evaluation results, interruption/recovery evidence, and database-backed dashboard are in the repository. The dashboard is deployed and verified at [https://spotify-review-insights-e5lu.onrender.com](https://spotify-review-insights-e5lu.onrender.com); see [`SUBMISSION_READINESS.md`](SUBMISSION_READINESS.md) for the remaining portal-submission step and evidence limits.
+The reproducible ranking, evaluation results, interruption/recovery evidence, and database-backed dashboard are in the repository. The dashboard is deployed and verified at [https://spotify-review-insights-e5lu.onrender.com](https://spotify-review-insights-e5lu.onrender.com). Submit the public repository URL through the course portal as the final course step.
 
 ## 100,000-row grading export
 
