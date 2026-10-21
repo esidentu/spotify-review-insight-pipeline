@@ -12,3 +12,5 @@
 - The sample records and compact call log are copied into this folder as `resume_demo_records.jsonl` and `resume_demo_calls.jsonl` so the evidence is included in the repository. Full output files are also under `../outputs/custom-0736cdcd005a/`; the full call ledger is in `../cost/pilot_calls.jsonl` under the run ID in the report.
 
 This was a real controlled interruption/resume using Jev; no 100,000-row output was changed. The HTML is a visual summary, not a screen recording. The assignment's short screen recording still needs to be captured from the live terminal session.
+
+To capture it, open PowerShell in the project folder and run `.evidenceecord_live_resume_demo.ps1`. The script generates a fresh synthetic input and does a no-call preflight first. When prompted, start Windows screen recording with **Win+Alt+R**, press Enter to run and pause, show the saved checkpoint, press Enter to resume, then stop recording when the script says it is complete. The script's maximum API reserve is printed before the first paid request and remains subject to the project's $8 local cap.
