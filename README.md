@@ -6,7 +6,7 @@ This project analyzes the supplied historical Spotify review extract using a sta
 
 The saved run covers the user-approved 100,000-review subset, plus all 13 empty-text source rows as quarantines. The full 660,622-row source was profiled. The assignment brief accepts at least 100,000 rows, but its coverage rubric is proportional, so this partial scope earns less coverage credit than a full-corpus run. The separate grading contract describes the full corpus as its target. See [submission readiness](SUBMISSION_READINESS.md) for the exact implications and remaining work.
 
-The local checker confirms 100,000 completed classifications, 13 quarantines, no missing in-scope IDs, and 21,901 valid exact-text cache reuses. Its status remains `review_required` because 12 failed attempts still have unavailable token usage (24 fields); successful bounded Jev `group` and `memo` calls are now logged. The dashboard has a SQLite-backed API and Jev-selected recommendation locally, but is not deployed and has no live URL yet. The synthetic planted-error test passed; the first injection prompt failed on intent, and version 2 passed the same synthetic safety criteria. The 100,000 historical output remains on its original prompt version.
+The local checker confirms 100,000 completed classifications, 13 quarantines, no missing in-scope IDs, and 21,901 valid exact-text cache reuses. Its status remains `review_required` because 12 failed attempts still have unavailable token usage (24 fields); successful bounded Jev `group` and `memo` calls are logged. The SQLite-backed API and dashboard are live at [https://spotify-review-insights-e5lu.onrender.com](https://spotify-review-insights-e5lu.onrender.com) on Render's Free plan; the first deployed snapshot has the expected 100,013 rows. Final live route checks are being completed. The synthetic planted-error test passed; the first injection prompt failed on intent, and version 2 passed the same synthetic safety criteria. The 100,000 historical output remains on its original prompt version.
 
 ## Rubric evidence map
 
@@ -17,7 +17,7 @@ The local checker confirms 100,000 completed classifications, 13 quarantines, no
 | Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [checkpoint evidence](grading/checkpoint_before.json), [resume evidence](grading/checkpoint_after.json), [local dashboard and deployment files](dashboard/README.md) |
 | Remaining requirements | [Submission readiness and completion plan](SUBMISSION_READINESS.md) |
 
-The short interruption/resume recording, live deployment, and course-portal submission remain open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
+The short interruption/resume recording and course-portal submission remain open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
 
 ## Source provenance
 

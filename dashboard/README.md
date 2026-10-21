@@ -23,11 +23,11 @@ The HTTP service defaults to localhost and exposes read-only JSON routes under `
 
 `Dockerfile` builds the SQLite database from the saved, tracked results, then copies only that database and the read-only server into the runtime image. `render.yaml` describes a free Render Web Service with `/healthz` as its health check. The service reads the platform `PORT` and binds to `0.0.0.0` in the container.
 
-The SQLite database is a fixed snapshot baked into each image. That suits this read-only assignment dashboard: new results require a new image build and deploy. It avoids paying for a persistent disk or separate database. Render's free web service sleeps after 15 minutes without traffic, and a wake can take about one minute; it is not a production availability guarantee. A live service still must be created from the Blueprint and verified, and its URL/access steps added to the repository README.
+The SQLite database is a fixed snapshot baked into each image. That suits this read-only assignment dashboard: new results require a new image build and deploy. It avoids paying for a persistent disk or separate database. Render's free web service sleeps after 15 minutes without traffic, and a wake can take about one minute; it is not a production availability guarantee. The service is live at https://spotify-review-insights-e5lu.onrender.com on the free plan.
 
 ## Current limits
 
 - The page reports 100,013 in-scope IDs, 100,000 nonempty classifications, and 13 quarantines separately; its metrics link to the full-source ingestion profile and run manifest.
 - The self-check remains `review_required`; the UI reports that state.
 - The approved 100,000-review Jev grouping and recommendation calls are complete. Their answers and exact state are saved in `grading/ai_grouping.json` and `grading/ai_recommendation.json`; the claim-checked memo is in `grading/memo.md`. Rebuild the database to refresh the dashboard from those saved outputs without provider calls.
-- This is not deployed yet. Create the Render Blueprint from the connected GitHub repository, deploy it, then verify the live `/healthz`, `/api/metrics`, `/api/ranking`, `/api/recommendation`, and issue evidence against the saved database. Add the resulting URL to the repository README.
+- Live service: https://spotify-review-insights-e5lu.onrender.com. The initial deploy built the SQLite database for 100,013 records and `/healthz` returned `{"status":"ok"}`. Live API routes and dashboard content are being verified against the saved database.
