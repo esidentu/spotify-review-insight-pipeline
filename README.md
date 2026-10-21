@@ -15,7 +15,7 @@ The local checker confirms 100,000 completed classifications, 13 quarantines, no
 | Deliverable quality | [Architecture and labels](PROJECT_GUIDE.md), [grading export](grading/README.md), [decision memo](grading/memo.md), [reproducible claims](grading/claims.csv) |
 | Testing and evaluation | [Golden 50 comparison and error analysis](cost/review_100000_quality.md), [mechanical self-check](grading-self-check.json), [planted-error and prompt-injection checks](grading/tests/README.md), [pilot and offline calculator](cost/README.md) |
 | Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [live interruption/resume snapshots and recording](evidence/README.md), [database-backed dashboard](dashboard/README.md) |
-| Remaining requirements | [Submission readiness and completion plan](SUBMISSION_READINESS.md) |
+| Completion status | See the evidence files linked above and the course submission portal for final submission. |
 
 The real synthetic interruption/resume demonstration, matching before/after snapshots, and screen recording are in [`evidence/`](evidence/README.md). The separate `grading/checkpoint_before.json` for the assignment-scale run is reconstructed from saved run evidence, not captured live. Course-portal submission remains open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
 
@@ -142,3 +142,4 @@ python src/spotify_pipeline/ranking.py --records grading/records.jsonl --members
 ```
 
 The ranker uses temporary SQLite storage, validates memberships and severities, and applies the contract's descending severity-sum order with ascending issue ID as the tie-break.
+
