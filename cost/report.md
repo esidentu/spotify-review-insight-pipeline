@@ -100,6 +100,19 @@ These notes record dashboard readings and checks of failed calls. TypeSafe warns
 
 Costs are phase totals across logged model roles. Request-duration sums are not substituted for wall-clock time. Local compute is reported separately and remains unknown unless measured or estimated in the run log.
 
+## Cold call evidence without a matching timing record
+
+These API calls are priced from their saved token usage, but the run ledger has no matching run ID. Cost per 1,000 IDs is based on distinct review IDs in enrichment calls. Wall time is **not recorded** and is not inferred from request durations.
+
+| Call run ID | Request attempts | Unique enrichment IDs | Successful enrichment IDs | Known API cost | Cost per 1,000 enriched IDs | Cold wall time | Usage status |
+|---|---:|---:|---:|---|---|---|---|
+| batch-benchmark-golden50 | 1 | 5 | 0 | unavailable | unavailable | not recorded | partial or unresolved |
+| batch-benchmark-golden50-w1 | 10 | 50 | 50 | USD 0.002229 | USD 0.044586 | not recorded | priced usage |
+| batch-benchmark-golden50-w2 | 10 | 50 | 50 | USD 0.002229 | USD 0.044586 | not recorded | priced usage |
+| cold-100-20261020T184149Z | 110 | 100 | 100 | USD 0.004468 | USD 0.044684 | not recorded | priced usage |
+| worker-comparison-golden50-w1 | 50 | 50 | 50 | USD 0.002135 | USD 0.042693 | not recorded | priced usage |
+| worker-comparison-golden50-w2 | 50 | 50 | 50 | USD 0.002135 | USD 0.042693 | not recorded | priced usage |
+
 ## Projection readiness
 
 Target counts from the editable projection file: source_rows=660622, nonempty_reviews=660609, empty_text_quarantines=13, distinct_nonempty_texts=484189.

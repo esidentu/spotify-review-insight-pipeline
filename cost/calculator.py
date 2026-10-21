@@ -301,10 +301,10 @@ def make_report(calls: list[dict[str, Any]], runs: list[dict[str, Any]], rates: 
             lines.append(f"| {provider} | {model} | {tier} | {unit} | {rate['price']} | {rate['currency']} | {rate['unit_size']} | {rate['as_of']} | {rate['source_url']} |")
         lines.append("")
 
+    run_unknown: set[str] = set()
     if runs:
         lines.extend(["## Measured runs", "", "| Run | Phase | Input rows | Input SHA-256 | Pilot IDs | Completed | Failed | Unique texts | Cache hits | Workers | Wall seconds | Throughput (inputs/sec) | Cost per 1,000 inputs | Cost per completed record | Local compute |", "|---|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|"])
         run_cost: dict[str, dict[str, Decimal]] = defaultdict(lambda: defaultdict(Decimal))
-        run_unknown: set[str] = set()
         for (run_id, _phase, _role, _route, _provider, _model), bucket in grouped.items():
             for currency, amount in bucket["cost"].items():
                 run_cost[run_id][currency] += amount
@@ -339,6 +339,52 @@ def make_report(calls: list[dict[str, Any]], runs: list[dict[str, Any]], rates: 
         lines.extend(["", "Costs are phase totals across logged model roles. Request-duration sums are not substituted for wall-clock time. Local compute is reported separately and remains unknown unless measured or estimated in the run log.", ""])
     else:
         lines.extend(["## Measured runs", "", "No run timing file is present. Cold/warm wall time, throughput, and per-record rates are **not measured**.", ""])
+
+    # Preserve cost evidence even when an API run ID is missing from the timing
+    # ledger. Do not attach costs to a nearby run by timestamp or infer elapsed
+    # time from per-request durations.
+    measured_run_ids = {str(run.get("run_id", "unspecified")) for run in runs}
+    orphan_cold_ids = sorted({
+        run_id for (run_id, phase, *_rest) in grouped
+        if phase == "cold" and run_id not in measured_run_ids
+    })
+    if orphan_cold_ids:
+        lines.extend([
+            "## Cold call evidence without a matching timing record",
+            "",
+            "These API calls are priced from their saved token usage, but the run ledger has no matching run ID. Cost per 1,000 IDs is based on distinct review IDs in enrichment calls. Wall time is **not recorded** and is not inferred from request durations.",
+            "",
+            "| Call run ID | Request attempts | Unique enrichment IDs | Successful enrichment IDs | Known API cost | Cost per 1,000 enriched IDs | Cold wall time | Usage status |",
+            "|---|---:|---:|---:|---|---|---|---|",
+        ])
+        for orphan_id in orphan_cold_ids:
+            orphan_calls = [call for call in calls if str(call.get("run_id", "unspecified")) == orphan_id and call.get("phase") == "cold"]
+            enrichment_ids = {
+                str(review_id)
+                for call in orphan_calls if call.get("role") == "enrich"
+                for review_id in call.get("review_ids", [])
+            }
+            successful_enrichment_ids = {
+                str(review_id)
+                for call in orphan_calls if call.get("role") == "enrich" and call.get("outcome") == "succeeded"
+                for review_id in call.get("review_ids", [])
+            }
+            cost_by_currency: dict[str, Decimal] = defaultdict(Decimal)
+            for (run_id, phase, _role, _route, _provider, _model), bucket in grouped.items():
+                if run_id == orphan_id and phase == "cold":
+                    for currency, amount in bucket["cost"].items():
+                        cost_by_currency[currency] += amount
+            known_cost = currency_text(dict(cost_by_currency))
+            if len(cost_by_currency) == 1 and enrichment_ids:
+                currency, amount = next(iter(cost_by_currency.items()))
+                per_thousand = f"{currency} {(amount * 1000 / Decimal(len(enrichment_ids))).quantize(Decimal('0.000001'))}"
+            else:
+                per_thousand = "unavailable"
+            usage_status = "partial or unresolved" if orphan_id in run_unknown else "priced usage"
+            lines.append(
+                f"| {orphan_id} | {len(orphan_calls)} | {len(enrichment_ids)} | {len(successful_enrichment_ids)} | {known_cost} | {per_thousand} | not recorded | {usage_status} |"
+            )
+        lines.append("")
 
     lines.extend(["## Projection readiness", ""])
     population = projection.get("target_population", {})

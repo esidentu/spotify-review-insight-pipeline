@@ -26,6 +26,8 @@ After a complete cold pass, measure result-cache reuse with:
 
 The warm command validates all 100 cached rows and logs a zero-call, zero-incremental-API-cost run. It does not contact TypeSafe. Both commands are separate from the offline replay below.
 
+**100-row evidence reconciliation:** the saved call ledger has a successful cold group `cold-100-20261020T184149Z` with 100 enrichment calls and 10 verification calls, covering the same 100 input IDs. Its returned usage prices to USD 0.004468380 total, or USD 0.044683800 per 1,000 input reviews. The successful 100-row entry in `pilot_runs.jsonl` instead uses run ID `cold-100-20261020T184234Z`, reports zero provider calls, and records 0.303010 seconds. The IDs do not match, so the offline report now shows the call-ledger cost separately and marks the cold API wall time **not recorded**; do not treat 0.303010 seconds as the 100-review cold API runtime. The warm run is separately recorded at 0.000749 seconds with zero calls.
+
 For the 500-review checkpoint, the first 100 rows are reused from the completed 100-review pilot; only uncached exact texts are sent to Jev. At the time, the cumulative USD 1.00 local stop limit, one-worker setting, and call ledger applied:
 
 ```powershell
