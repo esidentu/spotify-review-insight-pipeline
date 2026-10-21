@@ -91,14 +91,14 @@ Offline replay and ranking do not need an API key. Model requests need a valid T
 
 The current cumulative local stop limit is USD 8.00. The earlier 100-, 500-, and 10,000-review runs were performed under the previous USD 1.00 cap. The deterministic 100,000-review input can be prepared offline with `\.venv\Scripts\python.exe Data\prepare_final_100000.py`. Run the offline readiness check with `\.venv\Scripts\python.exe cost\pilot_preflight.py`; it does not contact TypeSafe. Paid cold commands are documented in `cost/README.md`; warm runs and offline cost replay make no provider calls. The cap is local and does not configure provider-side billing limits.
 
-The pipeline also accepts a user-supplied CSV with the six source columns. It quarantines empty review text, classifies unique nonempty text, independently verifies a deterministic 10% sample, and writes saved outputs and resume state under `outputs/custom-<input-sha256>/`. Its separate group, rank, and memo stages are deterministic code. Run preflight before any paid call:
+The pipeline also accepts a user-supplied CSV with the six source columns. It quarantines empty review text, classifies unique nonempty text, independently verifies a deterministic 10% sample, then builds deterministic topic memberships and ranking. Two separate bounded Jev Choice roles follow: `group` selects a bucket for further subtopic inspection, and `memo` selects an existing issue for investigation. Python validates each choice against the ranking and renders the memo with saved counts and review evidence. Each role has its own prompt, input handoff, output JSON, call record, and checkpoint under `outputs/custom-<input-sha256>/`. Preflight reserves both decision calls before the first paid request. Run preflight before execution:
 
 ```powershell
 .\.venv\Scripts\python.exe cost\pilot.py cold --input "C:\path\to\reviews.csv" --workers 2 --preflight-only
 .\.venv\Scripts\python.exe cost\pilot.py cold --input "C:\path\to\reviews.csv" --workers 2 --execute
 ```
 
-Resume with the same input and worker count by adding `--resume --execute`. Run `warm --input` to validate saved results without provider calls. The separate saved Jev grouping and recommendation decisions for the approved 100,000-review deliverable are in `grading/`.
+`--execute` explicitly authorizes the cold labels, verification, and any missing group/memo decisions for that input; the preflight command is offline. Resume with the same input and worker count by adding `--resume --execute`; saved successful decisions are reused so recovery does not repeat them. Outputs include `ai_grouping.json`, `ai_recommendation.json`, `membership.csv`, `ranking.csv`, and the evidence-backed `memo.md`. Run `warm --input` to validate saved labels without provider calls. The separate saved Jev grouping and recommendation decisions for the approved 100,000-review deliverable are in `grading/`.
 
 Never put API keys in code, logs, prompts, browser code, screenshots, or submitted artifacts.
 
