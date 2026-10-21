@@ -123,15 +123,13 @@
     {
       "code": "invalid_usage",
       "detail": "5f5aab9e-89c0-4bb2-a38a-01837dce6842"
-    },
-    {
-      "code": "missing_model_roles",
-      "detail": "['group', 'memo']"
     }
   ],
   "hash_convention": "Reference/benchmark: canonical UTF-8 JSON via canonical(); input files and audit script: exact bytes.",
   "input_files_sha256": {
-    "calls.jsonl": "dcea592e3b50f8d242094587f989ee7d427073ca2ec55b612dcff83f9d89cb84",
+    "ai_grouping.json": "061eea192a5efc9485fe63f2fed9a60b326f12d613d209ed4c294121bb3116b3",
+    "ai_recommendation.json": "1df522ba3d0d01c7e96ba9f67bef424fd9d5194af2a65caf86764b3bffbf5957",
+    "calls.jsonl": "d60781c15d5f4302ca17384a249d1e29d1356374f7424a33592953363d72fce8",
     "checkpoint_after.json": "a5edf18b2896897c548517bb51e1aa700fc00cb559cd8ba5ec272f41f6ab249f",
     "checkpoint_before.json": "b6196a794c8065e5e76a9af5323031348fde71c724500112a6bff0fbe74e77d5",
     "claims.csv": "508d1758c428aff28e17a52adc076cb5d332b40528a18196fd136b035ff3d682",
@@ -143,8 +141,7 @@
     "run.json": "7659c28e8d4729d0c79810d1512f0564f0a9143d09b14710ac4f4dd8500d1664"
   },
   "issue_counts": {
-    "invalid_usage": 24,
-    "missing_model_roles": 1
+    "invalid_usage": 24
   },
   "limits": [
     "Artifacts do not prove actual model execution, authorship, cost, or independent verification.",
@@ -157,9 +154,9 @@
     "status": "not_supplied"
   },
   "reference_sha256": "1c3f2b83cd499772799eb39c5b999f56082c6b77b8300833bc28b0edca50065a",
-  "reported_calls": 86021,
-  "reported_input_tokens": 83368064,
-  "reported_output_tokens": 12713394,
+  "reported_calls": 86024,
+  "reported_input_tokens": 83374440,
+  "reported_output_tokens": 12713590,
   "status": "review_required",
   "working_coverage_point_candidate": 1.0
 }

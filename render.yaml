@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: spotify-review-insights
+    runtime: docker
+    plan: free
+    dockerfilePath: ./dashboard/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeploy: false

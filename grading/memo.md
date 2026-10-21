@@ -8,6 +8,26 @@ This memo covers the deterministic 100,000-row subset, not the entire 660,622-ro
 
 Prioritize investigation of usability in the next planning cycle. It has the highest baseline priority score in this subset: 13,886 complaint/cancellation reviews, a severity sum of 37,501, and mean severity 2.700634 (claims `r01-complaint_count`, `r01-severity_sum`, `r01-mean_severity`, `r01-priority_score`). Billing ranks third with score 20,978 and playback fourth with score 19,747 (claims `r03-priority_score`, `r04-priority_score`). The second-ranked `other` bucket has a score of 29,493 but is too broad to directly identify a product investment (claim `r02-priority_score`). This is a prioritization signal from the selected sample; validate it with product telemetry and targeted user research before treating it as a population-wide conclusion.
 
+## Model-informed recommendation
+
+A bounded Jev Choice selected **topic-usability** for the next planning-cycle priority (confidence 0.580). The model saw the saved topic aggregates and two review-evidence excerpts per topic. Code rendered this section from the selected option and saved calculations; it did not ask Jev to invent metrics or prose.
+
+In the approved sample, topic-usability has 13,886 complaint/cancellation reviews, a severity sum of 37,501, mean severity 2.700634, and priority score 37,501. These numbers map to `r01-complaint_count`, `r01-severity_sum`, `r01-mean_severity`, `r01-priority_score`.
+
+A Jev grouping assessment selected **topic-other** as the bucket most in need of further subtopic review (confidence 0.950). This is a follow-up signal only: the deterministic baseline memberships and ranking were not changed.
+
+### Supporting review evidence
+
+- `117770a7-cec9-4bc3-8a9f-a5d6f3544b5d` (severity 5): “This app is not good it trase our history and their are many ads in it and it is very difficult to use.”
+
+- `12856471-acdc-44c5-8f4f-612e4ac878da` (severity 5): “I thought the some songs just got deleted from my playlist, turns out this idiot app removed a lot of good songs 🤬🤬🤬😡😡😡”
+
+### Alternative
+
+The next ranked baseline bucket is topic-other with score 29,493 (`r02-priority_score`). The broad `topic-other` bucket ranks 2 and should be decomposed before it is treated as a specific feature investment.
+
+This is an action-priority judgment about a self-selected sample of 100,000 reviews, not a population estimate. Validate it against product telemetry and targeted research before committing engineering work.
+
 ## Baseline ranking
 
 | Rank | Topic bucket | Complaint/cancellation count | Severity sum | Mean severity | Priority score | Claims |

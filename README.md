@@ -6,18 +6,18 @@ This project analyzes the supplied historical Spotify review extract using a sta
 
 The saved run covers the user-approved 100,000-review subset, plus all 13 empty-text source rows as quarantines. The full 660,622-row source was profiled. The assignment brief accepts at least 100,000 rows, but its coverage rubric is proportional, so this partial scope earns less coverage credit than a full-corpus run. The separate grading contract describes the full corpus as its target. See [submission readiness](SUBMISSION_READINESS.md) for the exact implications and remaining work.
 
-The local checker confirms 100,000 completed classifications, 13 quarantines, no missing in-scope IDs, and 21,901 valid exact-text cache reuses. Its status remains `review_required`: usage is unavailable for 12 failed calls and the saved run lacks model-call evidence for the `group` and `memo` roles. The dashboard is local only; there is no live URL yet. No evidence is claimed for tests or recordings that have not been performed.
+The local checker confirms 100,000 completed classifications, 13 quarantines, no missing in-scope IDs, and 21,901 valid exact-text cache reuses. Its status remains `review_required` because 12 failed attempts still have unavailable token usage (24 fields); successful bounded Jev `group` and `memo` calls are now logged. The dashboard has a SQLite-backed API and Jev-selected recommendation locally, but is not deployed and has no live URL yet. The synthetic planted-error test passed; the first injection prompt failed on intent, and version 2 passed the same synthetic safety criteria. The 100,000 historical output remains on its original prompt version.
 
 ## Rubric evidence map
 
 | Rubric area | Evidence |
 |---|---|
 | Deliverable quality | [Architecture and labels](PROJECT_GUIDE.md), [grading export](grading/README.md), [decision memo](grading/memo.md), [reproducible claims](grading/claims.csv) |
-| Testing and evaluation | [Golden 50 comparison and error analysis](cost/review_100000_quality.md), [mechanical self-check](grading-self-check.json), [pilot and offline calculator](cost/README.md) |
-| Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [checkpoint evidence](grading/checkpoint_before.json), [resume evidence](grading/checkpoint_after.json), [local dashboard](dashboard/README.md) |
+| Testing and evaluation | [Golden 50 comparison and error analysis](cost/review_100000_quality.md), [mechanical self-check](grading-self-check.json), [planted-error and prompt-injection checks](grading/tests/README.md), [pilot and offline calculator](cost/README.md) |
+| Working result | [100,000-row records](grading/records.jsonl), [reproducible ranking](grading/ranking.csv), [checkpoint evidence](grading/checkpoint_before.json), [resume evidence](grading/checkpoint_after.json), [local dashboard and deployment files](dashboard/README.md) |
 | Remaining requirements | [Submission readiness and completion plan](SUBMISSION_READINESS.md) |
 
-The prompt-injection and planted-error tests, short interruption/resume recording, executed group/memo model roles, and deployed dashboard/backend/database are still open. The current dashboard uses a locally generated memo rather than an AI-generated recommendation.
+The short interruption/resume recording, live deployment, and course-portal submission remain open. The dashboard's model-selected priority and grouping follow-up are recorded in `grading/ai_recommendation.json` and `grading/ai_grouping.json`; code renders the memo using saved calculations and review evidence.
 
 ## Source provenance
 
@@ -30,19 +30,32 @@ flowchart LR
   A[Input CSV] --> B[Python ingest, profile, exact-text cache]
   B --> C[Jev enrich]
   C --> D[Jev independent verify sample]
-  D --> E[Python group into topic buckets]
-  E --> F[Python aggregate and rank]
-  F --> G[Local memo template]
-  B --> H[(Saved JSONL and checkpoints)]
-  C --> H
-  D --> H
-  F --> I[(Local SQLite database)]
-  G --> I
-  I --> J[Local HTTP API and dashboard]
-  C -. bounded retries, budget stop, resume .-> H
+  D --> E[Python topic memberships]
+  E --> F[Python aggregate and baseline rank]
+  F --> G[Jev group Choice: follow-up bucket]
+  F --> H[Jev memo Choice: next-cycle priority]
+  G --> H
+  H --> I[Python validate claims and render recommendation]
+  B --> S[(Saved records, calls, checkpoints)]
+  C --> S
+  D --> S
+  E --> S
+  F --> S
+  G --> S
+  H --> S
+  I --> S
+  F --> J[(SQLite database: reviews, metrics, claims, memo)]
+  I --> J
+  J --> K[Read-only backend API]
+  K --> L[Dashboard]
+  M[Render Web Service<br/>deployment pending] -. hosts .-> K
+  M -. hosts .-> L
+  C -. bounded requests, spend stop, saved resume .-> H
 ```
 
-The historical 100,000 run used Jev for enrichment and verification; Python created broad topic buckets, ranked them, and templated the memo. This does not yet satisfy the assignment's executed `group` and `memo` model-role evidence.
+Role handoffs: enrichment receives review text and emits the shared labels and evidence; verification receives a saved proposed label and source text; Python creates complaint-topic memberships and baseline metrics; the group Choice receives those metrics plus two saved review examples per topic and flags one bucket for follow-up; the memo Choice receives the same evidence plus that group result and selects a priority. Python validates the chosen issue against the saved ranking and renders numbers/evidence using `claims.csv`. `grading/calls.jsonl` stores the role inputs, choices, probabilities, usage, and review IDs. Failed requests are not retried automatically; the cold runner keeps bounded retry, spend-stop, checkpoint, and resume controls.
+
+The historical 100,000 run used Jev for enrichment and verification; Python created broad topic buckets and ranked them. A subsequent bounded group call selected `topic-other` for finer subtopic review, and a memo call selected `topic-usability` for next-cycle investigation. Neither call changed baseline memberships or ranking. Python rendered the recommendation from the model choice, saved calculations, claim IDs, and review evidence.
 
 Example trace: review `553d99de-099a-4413-b9dd-4f4fe508f36a` has source text “Removed all the basic features.” The saved enrichment labels it `usability` / `complaint`, severity 3, with an exact-text evidence quote. Its field confidence was below the 0.5 review threshold, so `needs_review=true`; the verification record stores support probability 0.57, and `grading/calls.jsonl` records a successful verifier request for the ID. The review belongs to `topic-usability`, ranked first with 13,886 complaints and a 37,501 severity sum. Those figures are `r01-complaint_count`, `r01-severity_sum`, and `r01-priority_score` in `grading/claims.csv`, cited in the decision memo. An ambiguous-label example and its handling are discussed in the [quality review](cost/review_100000_quality.md).
 
@@ -56,7 +69,7 @@ Example trace: review `553d99de-099a-4413-b9dd-4f4fe508f36a` has source text “
 
 ## Low-cost design
 
-Use Python or SQL for CSV parsing, source accounting, exact-text deduplication and cache lookup, schema checks, grouping, aggregation, and ranking. The assignment suggests Jev for fixed labels and a small language model for bounded judgment tasks; those are candidates to measure, not hard requirements. Distinct enrichment, verification, grouping, and memo roles will have separate instructions and saved artifacts, and may share a model. Exact-text cache hits still produce one output per original review ID.
+Use Python or SQL for CSV parsing, source accounting, exact-text deduplication and cache lookup, schema checks, aggregation, and ranking. Jev handles fixed labels, verification, and two bounded decisions over saved group metrics and review evidence. Code keeps memberships, ranking, cost checks, evidence validation, and memo number rendering deterministic. Exact-text cache hits still produce one output per original review ID.
 
 ## Local setup
 
@@ -78,13 +91,22 @@ Offline replay and ranking do not need an API key. Model requests need a valid T
 
 The current cumulative local stop limit is USD 8.00. The earlier 100-, 500-, and 10,000-review runs were performed under the previous USD 1.00 cap. The deterministic 100,000-review input can be prepared offline with `\.venv\Scripts\python.exe Data\prepare_final_100000.py`. Run the offline readiness check with `\.venv\Scripts\python.exe cost\pilot_preflight.py`; it does not contact TypeSafe. Paid cold commands are documented in `cost/README.md`; warm runs and offline cost replay make no provider calls. The cap is local and does not configure provider-side billing limits.
 
+The pipeline also accepts a user-supplied CSV with the six source columns. It quarantines empty review text, classifies unique nonempty text, independently verifies a deterministic 10% sample, and writes saved outputs and resume state under `outputs/custom-<input-sha256>/`. Its separate group, rank, and memo stages are deterministic code. Run preflight before any paid call:
+
+```powershell
+.\.venv\Scripts\python.exe cost\pilot.py cold --input "C:\path\to\reviews.csv" --workers 2 --preflight-only
+.\.venv\Scripts\python.exe cost\pilot.py cold --input "C:\path\to\reviews.csv" --workers 2 --execute
+```
+
+Resume with the same input and worker count by adding `--resume --execute`. Run `warm --input` to validate saved results without provider calls. The separate saved Jev grouping and recommendation decisions for the approved 100,000-review deliverable are in `grading/`.
+
 Never put API keys in code, logs, prompts, browser code, screenshots, or submitted artifacts.
 
 ## Required scale checkpoints
 
 Measure the fixed cold and warm `cost_100.csv` pilot first, then refresh estimates at 500 and 10,000 reviews. The assignment accepts a final classification run of at least 100,000 nonempty reviews; the full source has 660,609 nonempty reviews and 13 empty-text quarantines. Requests must contain at most 50 reviews. Start with one worker, then try two within measured capacity. The current runner keeps one review per request and overlaps up to two independent calls; each result is validated and durably saved before its slot is reused. Resume requires the same input, cache, labels, and worker count.
 
-The reproducible ranking, evaluation results, interruption/recovery evidence, and local database-backed dashboard are in the repository. The deployed dashboard/backend/database requirement remains open; see [`SUBMISSION_READINESS.md`](SUBMISSION_READINESS.md).
+The reproducible ranking, evaluation results, interruption/recovery evidence, and local database-backed dashboard are in the repository. The Docker image and free Render Blueprint are prepared, but deployment, live verification, and the public URL remain open; see [`SUBMISSION_READINESS.md`](SUBMISSION_READINESS.md).
 
 ## 100,000-row grading export
 
@@ -96,7 +118,7 @@ Run the zero-API self-check with the prepared local reference:
 .\.venv\Scripts\python.exe Data\check_submission.py check --reference grading-reference.json --submission grading --out grading-self-check.json
 ```
 
-The report is saved as [`grading-self-check.json`](grading-self-check.json). It reports 100,013/100,013 IDs accounted for, 100,000 completed and 13 quarantined; `review_required` remains because 12 failed calls have unknown usage and the historical run has no executed group/memo model-call roles. Those stages used local deterministic code, as documented in `grading/local_stages.jsonl`.
+The report is saved as [`grading-self-check.json`](grading-self-check.json). It reports 100,013/100,013 IDs accounted for, 100,000 completed and 13 quarantined; `review_required` remains because 12 older failed calls have unknown usage (24 missing token fields). The bounded group and memo decisions are saved with their separate inputs and actual usage in `grading/calls.jsonl`.
 
 The historical run used the original prompts in `prompts/enrich.md` and `prompts/verify.md`. The contract's explicit bare-boycott exception was added afterward in `prompts/enrich-v2.md` and `prompts/verify-v2.md`; those versioned prompts do not retroactively change the saved labels or call evidence.
 
@@ -109,7 +131,7 @@ Build a SQLite database from the saved 100,000-row outputs and run the local rea
 .\.venv\Scripts\python.exe dashboard\server.py
 ```
 
-Open `http://127.0.0.1:8765/`. See [`dashboard/README.md`](dashboard/README.md) for its API and current limits. This is a local implementation, not the required deployed dashboard. Its saved recommendation is the local memo output, not a model-generated recommendation.
+Open `http://127.0.0.1:8765/`. See [`dashboard/README.md`](dashboard/README.md) for its API and deployment preparation. The live service has not been deployed or verified yet. The local database stores Jev's saved grouping follow-up, selected priority, and the claim-checked recommendation memo.
 
 ## Rebuild ranking without model calls
 

@@ -6,6 +6,10 @@ This report is calculated offline from saved call usage, run measurements, and e
 
 | Run | Phase | Role | Provider | Model | Effort | Prompt version | Schema version | Batch sizes | Workers | Attempts | Outcomes | Input tokens | Cached input tokens | Output tokens | Billed requests | Known cost | Status |
 |---|---|---|---|---|---|---|---|---|---|---:|---|---:|---:|---:|---:|---|---|
+| adversarial-checks-2026-10-20 | finalization | enrich (primary) | typesafe | jev-1.13.0 | none | adversarial-check-v1 | typed-response-v1 | 1 | 1 | 1 | succeeded: 1 | 1025 | 0 | 162 | 1 | USD 0.000043 | priced usage |
+| adversarial-checks-2026-10-20 | finalization | verify | typesafe | jev-1.13.0 | none | adversarial-check-v1 | typed-response-v1 | 1 | 1 | 1 | succeeded: 1 | 449 | 0 | 20 | 1 | USD 0.000019 | priced usage |
+| adversarial-checks-2026-10-21 | finalization | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v2 | typed-response-v1 | 1 | 1 | 1 | succeeded: 1 | 1257 | 0 | 160 | 1 | USD 0.000053 | priced usage |
+| adversarial-checks-2026-10-21 | finalization | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | typed-response-v1 | 1 | 1 | 1 | succeeded: 1 | 449 | 0 | 20 | 1 | USD 0.000019 | priced usage |
 | batch-benchmark-golden50 | cold | enrich (primary) | typesafe | jev-latest | none | spotify-enrich-batch5-benchmark-v1 | record-v1 | 5 | 1 | 1 | failed: 1 | 0 | 0 | 0 | 1 | unavailable | partial or unresolved |
 | batch-benchmark-golden50-w1 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-batch5-benchmark-v1 | record-v1 | 5 | 1 | 10 | succeeded: 10 | 53079 | 0 | 8662 | 10 | USD 0.002229 | priced usage |
 | batch-benchmark-golden50-w2 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-batch5-benchmark-v1 | record-v1 | 5 | 2 | 10 | succeeded: 10 | 53079 | 0 | 8663 | 10 | USD 0.002229 | priced usage |
@@ -22,10 +26,13 @@ This report is calculated offline from saved call usage, run measurements, and e
 | cold-100000-20261020T213754Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 2 | 6965 | succeeded: 6965 | 3190014 | 0 | 139300 | 6965 | USD 0.133981 | priced usage |
 | cold-500-20261020T185608Z | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 1 | 379 | succeeded: 379 | 385992 | 0 | 60846 | 379 | USD 0.016212 | priced usage |
 | cold-500-20261020T185608Z | cold | verify | typesafe | jev-1.13.0 | none | spotify-verify-v1 | record-v1 | 1 | 1 | 38 | succeeded: 38 | 17154 | 0 | 760 | 38 | USD 0.000720 | priced usage |
+| dashboard-finalization-100000 | finalization | group | typesafe | jev-1.13.0 | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | succeeded: 1 | 3180 | 0 | 101 | 1 | USD 0.000134 | priced usage |
+| dashboard-finalization-100000 | finalization | group | typesafe | jev-latest | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | failed: 1 | 0 | 0 | 0 | 0 | unavailable | priced usage |
+| dashboard-finalization-100000 | finalization | memo | typesafe | jev-1.13.0 | none | spotify-group-and-recommendation-v1 | choice-v1 | 1 | 1 | 1 | succeeded: 1 | 3196 | 0 | 95 | 1 | USD 0.000134 | priced usage |
 | worker-comparison-golden50-w1 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 1 | 50 | succeeded: 50 | 50825 | 0 | 8027 | 50 | USD 0.002135 | priced usage |
 | worker-comparison-golden50-w2 | cold | enrich (primary) | typesafe | jev-1.13.0 | none | spotify-enrich-v1 | record-v1 | 1 | 2 | 50 | succeeded: 50 | 50825 | 0 | 8027 | 50 | USD 0.002135 | priced usage |
 
-**Known API subtotal:** USD 3.505917.
+**Known API subtotal:** USD 3.506319.
 **Calls with incomplete or missing usage:** 13.
 
 ## Usage dashboard reconciliation
@@ -48,13 +55,16 @@ These notes record dashboard readings and checks of failed calls. TypeSafe warns
 - Call `faf90852-b5a7-428f-8009-ed1b7e23beec`: Two-worker request returned TypeSafeAPITimeoutError without provider request ID or usage tokens; the TypeSafe dashboard warns that usage may be delayed. Usage is unknown, so retain the full estimated reserve and separately reserve a resumed request. Reserved against the local cap: USD 0.000095046.
 - Call `e8dc567e-1207-49d7-aa4a-026af2ef131a`: Request returned TypeSafeAPITimeoutError without provider request ID or usage tokens. The SDK default timeout was 10 seconds; usage remains uncertain and the dashboard is delayed. Retain the full reserve. The runner timeout is now raised to 60 seconds for future attempts. Reserved against the local cap: USD 0.000103824.
 - Dashboard snapshot: After the 100,000-review run, refreshed TypeSafe Usage page (All traffic, Last 24 hours) showed estimated spend USD 3.228, 88,910,604 tokens, and 75,711 requests. The page warns usage statistics may be delayed. Local call ledger known subtotal is USD 3.505917324; dashboard and ledger are not reconciled.
+- Call `89c8a8ac-72bc-4212-9e54-5110b38200bb`: SDK raised TypeSafeAPIConnectionError with getaddrinfo failed before any HTTP connection; recorded execution output confirms DNS failure before dispatch. Reserved against the local cap: USD 0.
 
 ## Rate sources
 
 | Provider | Model | Tier | Billing unit | Price | Currency | Unit size | As of | Source |
 |---|---|---|---|---:|---|---:|---|---|
-| typesafe | jev | standard | input_tokens | 0.042 | USD | 1000000 | 2026-10-20 | https://typesafe.ai/ |
-| typesafe | jev | standard | output_tokens | 0 | USD | 1000000 | 2026-10-20 | https://typesafe.ai/ |
+| typesafe | jev | standard | input_tokens | 0.042 | USD | 1000000 | 2026-10-20 | https://docs.typesafe.ai/models |
+| typesafe | jev | standard | output_tokens | 0 | USD | 1000000 | 2026-10-20 | https://docs.typesafe.ai/models |
+| typesafe | jev-latest | standard | input_tokens | 0.042 | USD | 1000000 | 2026-10-20 | https://docs.typesafe.ai/models |
+| typesafe | jev-latest | standard | output_tokens | 0 | USD | 1000000 | 2026-10-20 | https://docs.typesafe.ai/models |
 
 ## Measured runs
 
@@ -77,6 +87,7 @@ These notes record dashboard readings and checks of failed calls. TypeSafe warns
 | cold-100000-20261020T213754Z | cold | 100000 | cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c | 100000 | 77750 | 22250 | 78099 | 71768 | 2 | 388.972316 | 257.09 | unavailable | unavailable | unknown/not recorded |
 | cold-100000-20261020T213754Z | cold | 100000 | cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c | 100000 | 83508 | 16492 | 78099 | 77899 | 2 | 380.724036 | 262.66 | unavailable | unavailable | unknown/not recorded |
 | cold-100000-20261020T213754Z | cold | 100000 | cf2641e8f3075e392a4c693c7cd45484c68e907569c48718cf131f0e321d643c | 100000 | 100000 | 0 | 78099 | 83586 | 2 | 1764.81076 | 56.66 | unavailable | unavailable | unknown/not recorded |
+| dashboard-finalization-100000 | finalization | 0 | fb050d3779f676c15854b81d18d5e1e611d13291adfb10953c1a0564b6604be3 | 0 | 0 | 0 | 0 | 0 | 1 | 0.521404 | 0.00 | unavailable | unavailable | unknown/not recorded |
 
 Costs are phase totals across logged model roles. Request-duration sums are not substituted for wall-clock time. Local compute is reported separately and remains unknown unless measured or estimated in the run log.
 

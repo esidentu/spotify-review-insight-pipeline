@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -29,9 +30,9 @@ h1,h2{line-height:1.2}.grid{display:grid;grid-template-columns:repeat(auto-fit,m
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function load(){
  const m=await (await fetch('/api/metrics')).json();
- document.querySelector('#check').textContent=`Self-check: ${m.self_check_status} · ${m.completed.toLocaleString()}/${m.expected.toLocaleString()} classified`;
+ document.querySelector('#check').textContent=`Self-check: ${m.self_check_status} · ${m.completed.toLocaleString()}/${m.labelable_total.toLocaleString()} nonempty classified · ${m.quarantined.toLocaleString()} empty quarantined`;
  document.querySelector('#scope').textContent=`Run ${m.pipeline_run_id} · source SHA-256 ${m.source_file_sha256}`;
- document.querySelector('#metrics').innerHTML=[['Source rows',m.source_rows],['Selected rows',m.expected],['Completed labels',m.completed],['Needs review',m.needs_review],['Complaint memberships',m.memberships],['Issue buckets',m.issue_count]].map(([k,v])=>`<div class="card"><div>${k}</div><div class="value">${Number(v).toLocaleString()}</div></div>`).join('');
+ document.querySelector('#metrics').innerHTML=[['Source rows',m.source_rows],['In-scope IDs',m.expected],['Nonempty classified',`${Number(m.completed).toLocaleString()} / ${Number(m.labelable_total).toLocaleString()}`],['Empty-text quarantines',m.quarantined],['Needs review',m.needs_review],['Complaint memberships',m.memberships],['Issue buckets',m.issue_count]].map(([k,v])=>`<div class="card"><div>${k}</div><div class="value">${typeof v==='string'&&v.includes('/')?esc(v):Number(v).toLocaleString()}</div></div>`).join('');
  const ranking=await (await fetch('/api/ranking')).json();
  document.querySelector('#ranking').innerHTML=ranking.map(x=>`<tr><td>${x.rank}</td><td>${esc(x.issue_id)}</td><td>${Number(x.complaint_count).toLocaleString()}</td><td>${esc(x.mean_severity)}</td><td>${Number(x.priority_score).toLocaleString()}</td><td><button data-issue="${esc(x.issue_id)}">Evidence</button></td></tr>`).join('');
  const rec=await (await fetch('/api/recommendation')).json();document.querySelector('#rec-origin').textContent=rec.origin;document.querySelector('#recommendation').textContent=rec.markdown;
@@ -51,6 +52,7 @@ def handler_for(db_path: Path):
             body = json.dumps(value, ensure_ascii=False).encode("utf-8")
             self.send_response(code)
             self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
@@ -64,18 +66,25 @@ def handler_for(db_path: Path):
                     body = PAGE.encode("utf-8")
                     self.send_response(200)
                     self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("X-Content-Type-Options", "nosniff")
                     self.send_header("Content-Length", str(len(body)))
                     self.end_headers()
                     self.wfile.write(body)
+                elif parsed.path == "/healthz":
+                    con.execute("SELECT value FROM metadata WHERE key='pipeline_run_id'").fetchone()
+                    self.send_json({"status": "ok"})
                 elif parsed.path == "/api/metrics":
                     q = con.execute("""SELECT COUNT(*) total,
                         SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) completed,
+                        SUM(CASE WHEN status='quarantined' THEN 1 ELSE 0 END) quarantined,
                         SUM(CASE WHEN needs_review=1 THEN 1 ELSE 0 END) needs_review
                         FROM reviews""").fetchone()
                     meta = dict(con.execute("SELECT key,value FROM metadata"))
                     self.send_json({
                         "source_rows": int(meta["source_rows"]), "expected": int(meta["analysis_count"]),
+                        "labelable_total": int(meta["analysis_count"]) - int(q["quarantined"] or 0),
                         "completed": int(q["completed"] or 0), "needs_review": int(q["needs_review"] or 0),
+                        "quarantined": int(q["quarantined"] or 0),
                         "memberships": con.execute("SELECT COUNT(*) FROM issue_membership").fetchone()[0],
                         "issue_count": con.execute("SELECT COUNT(*) FROM ranking").fetchone()[0],
                         "pipeline_run_id": meta["pipeline_run_id"], "source_file_sha256": meta["source_file_sha256"],
@@ -85,10 +94,11 @@ def handler_for(db_path: Path):
                     self.send_json([dict(row) for row in con.execute("SELECT * FROM ranking ORDER BY rank")])
                 elif parsed.path == "/api/recommendation":
                     meta = dict(con.execute("SELECT key,value FROM metadata"))
-                    self.send_json({"origin": meta["recommendation_origin"], "markdown": meta["recommendation_markdown"]})
+                    self.send_json({"origin": meta["recommendation_origin"], "grouping_follow_up": meta["grouping_follow_up"], "markdown": meta["recommendation_markdown"]})
                 elif parsed.path == "/api/evidence":
                     issue_id = parse_qs(parsed.query).get("issue_id", [""])[0]
-                    rows = con.execute("""SELECT r.review_id,r.review_text,r.topic,r.intent,r.severity
+                    rows = con.execute("""SELECT r.review_id,r.review_text,r.topic,r.intent,r.severity,
+                        r.evidence_quote,r.verification_probability,r.needs_review
                         FROM issue_membership m JOIN reviews r USING(review_id)
                         WHERE m.issue_id=? ORDER BY r.severity DESC,r.review_id LIMIT 20""", (issue_id,))
                     self.send_json([dict(row) for row in rows])
@@ -105,8 +115,8 @@ def handler_for(db_path: Path):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--database", type=Path, default=DEFAULT_DB)
-    parser.add_argument("--host", default="127.0.0.1", help="defaults to localhost; use 0.0.0.0 only behind a configured deployment proxy")
-    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--host", default=os.environ.get("HOST", "127.0.0.1"), help="defaults to localhost; use 0.0.0.0 only behind a configured deployment proxy")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8765")))
     args = parser.parse_args()
     db_path = args.database.resolve()
     if not db_path.is_file():
